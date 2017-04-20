@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import socket
 import threading
-
+from server.send_email import SendEmail
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('0.0.0.0', 2333))
 s.listen(5)  # 等待连接的最大数量
@@ -17,6 +17,8 @@ def tcplink(sock, addr):
         print('client message: %s' % data_plain)
         if data_plain == 'email':
             sock.send(b'Ready!')
+            send_email = SendEmail('111', 'wo', 'ni', 'zhuti', 'yangzd1993@foxmail.com')
+            send_email.send()
         elif not data or data_plain == 'exit':
             break
         sock.send(('Hello, %s!' % data.decode('utf-8')).encode('utf-8'))
