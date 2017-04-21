@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import socket
 import threading
-from server.send_email import SendEmail
+from send_email import SendEmail
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('0.0.0.0', 2333))
 s.listen(5)  # 等待连接的最大数量
@@ -10,7 +10,7 @@ print('Waiting for connection...')
 
 def tcplink(sock, addr):
     print('Accept new connection from %s:%s...' % addr)
-    sock.send(b'Welcome to the price-monitor server!')
+    sock.send(b'Welcome to the price-monitor price-monitor-server!')
     while True:
         data = sock.recv(1024)
         data_plain = data.decode('utf-8')  # byte转str
