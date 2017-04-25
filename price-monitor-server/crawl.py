@@ -4,16 +4,12 @@ import json
 from lxml import etree
 
 
-# selector = etree.HTML(r.text)
-# item_name = selector.xpath("//*[@class='sku-name']/text()")  # list
-# item_name = item_name[0].strip()
-
-
 class Crawl(object):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.221 Safari/537.36 SE 2.X MetaSr 1.0'}
 
     def get_price(self, item_id_inner):
         url = 'https://p.3.cn/prices/mgets?callback=&skuIds=J_' + item_id_inner
+        print '该商品价格URL：', url
         r = requests.get(url, headers=self.headers)
         price = r.text
         price = price[2:-4]
@@ -27,10 +23,3 @@ class Crawl(object):
         name = selector.xpath("//*[@class='sku-name']/text()")  # list
         name = name[0].strip()
         return name
-
-crawl = Crawl()
-item_id = '2327501'
-item_price = crawl.get_price(item_id)
-item_name = crawl.get_name(item_id)
-print item_name
-print item_price
