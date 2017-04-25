@@ -6,10 +6,12 @@ import smtplib
 
 
 class SendEmail(object):
-    # 发送邮箱设置(之后需要设置在txt中以保障密码安全性)
-    from_addr = '3120611047@ujs.edu.cn'
-    password = '931102s'
-    smtp_server = 'mail.ujs.edu.cn'
+    # 发送邮箱设置
+    with open('mailbox.txt', 'r') as f:
+        mail_setting = f.readlines()
+    from_addr = mail_setting[0].strip()
+    password = mail_setting[1].strip()
+    smtp_server = mail_setting[2].strip()
 
     def __init__(self, text, sender, receiver, subject, address):
         self.text = text
@@ -38,3 +40,5 @@ class SendEmail(object):
 
 # sendemail = SendEmail('111', 'wo', 'ni', 'zhuti', 'yangzd1993@foxmail.com')
 # sendemail.send()
+
+
