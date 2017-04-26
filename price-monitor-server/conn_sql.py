@@ -2,9 +2,6 @@
 import mysql.connector
 from crawl import Crawl
 from send_email import SendEmail
-import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")  # 不加入的话邮件发送会报编码错误
 
 class ItemQuery(object):
 
@@ -26,7 +23,7 @@ class ItemQuery(object):
         item_name_inner = '\'' + item_name_inner + '\''  # sql插入varchar前后有引号，可以改进
         cursor = conn.cursor()
         sql = 'update monitor set item_name = %s, item_price = %s where item_id = %s' % (item_name_inner, item_price_inner, item_id)
-        print '更新语句为：', sql
+        print '更新语句为：', sql.encode('utf-8')  # Linux只能用这个不能用reload(sys)
         cursor.execute(sql)
         conn.commit()
         cursor.close()
@@ -45,7 +42,7 @@ class ItemQuery(object):
             cursor.execute(sql)
             user_email = cursor.fetchone()
             user_email = str(user_email[0])  # 改进
-            email_text = '您监控的商品：' + str(item_name_inner) + '，现在价格为：' + str(item_price_inner) + '，您设定的价格为：' + str(user_price[0]) + '赶紧抢购吧！'
+            email_text = '您监控的商品：' + str(item_name_inner) + '，现在价格为：' + str(item_price_inner) + '，您设定的价格为：' + str(user_price[0]) + '  赶紧抢购吧！'
             email_zhuti = '您监控的商品降价了！'
             sendemail = SendEmail(email_text, 'admin', 'user', email_zhuti, user_email)
             sendemail.send()
