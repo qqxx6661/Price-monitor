@@ -21,5 +21,13 @@ class Crawl(object):
         r = requests.get(url, headers=self.headers)
         selector = etree.HTML(r.text)
         name = selector.xpath("//*[@class='sku-name']/text()")  # list
-        name = name[0].strip()
+        try:
+            name = name[0].strip()
+        except IndexError as e:
+            print('尝试第二种名称捕获方式')
+            try:
+                name = selector.xpath("//*[@id='name']/h1/text()")
+                name = name[0].strip()
+            except IndexError as e:
+                print('名称捕获失败')
         return name

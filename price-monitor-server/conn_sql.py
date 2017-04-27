@@ -2,6 +2,8 @@
 import mysql.connector
 from crawl import Crawl
 from send_email import SendEmail
+import time
+
 
 class ItemQuery(object):
 
@@ -10,6 +12,7 @@ class ItemQuery(object):
         cursor.execute('select item_id from monitor where status=1')
         items_inner = cursor.fetchall()
         print '待查询的商品ID：', items_inner
+        print '----------------------'
         cursor.close()
         return items_inner
 
@@ -23,7 +26,7 @@ class ItemQuery(object):
         item_name_inner = '\'' + item_name_inner + '\''  # sql插入varchar前后有引号，可以改进
         cursor = conn.cursor()
         sql = 'update monitor set item_name = %s, item_price = %s where item_id = %s' % (item_name_inner, item_price_inner, item_id)
-        print '更新语句为：', sql.encode('utf-8')  # Linux只能用这个不能用reload(sys)
+        print '更新语句为：', sql.encode('utf-8')  # ascii错误解决
         cursor.execute(sql)
         conn.commit()
         cursor.close()
@@ -50,7 +53,7 @@ class ItemQuery(object):
         cursor.close()
 
 
-conn = mysql.connector.connect(user='root', password='root', database='price-monitor')
+conn = mysql.connector.connect(user='root', password='root', database='pricemonitor')
 query = ItemQuery()
 items = query.read_itemid()
 for item in items:
@@ -59,4 +62,6 @@ for item in items:
     item_name, item_price = query.crawl_name_price(item)
     query.write_item_info(item, item_name, item_price)
     query.compare_send_email(item, item_price, item_name)
+    print '----------------------'
+    time.sleep(2)
 conn.close()
