@@ -3,19 +3,19 @@ price-monitor
 
 # 简介 Introduction
 
-京东商城商品价格监控，用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。
+**京东商城商品价格监控，用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
 
 monitor price changes in JD.com, users can set expected price of specific item. Once the price is lower than excepted, the server will send an e-mail to user. 
 
-以后将逐步支持更多商城： 天猫，淘宝，亚马逊等
+**以后将逐步支持更多商城： 天猫，淘宝，亚马逊等**
 
 Amazon-CN, Amazon-US, Tmall will be supported in the future
 
-该项目由**网页端(php)**-----**Mysql**-----**后台监控(Python)**组成。
+该项目由**网页端(php)-----Mysql-----后台监控(Python)**组成。
 
 目前库中只有后台监控(price-monitor-server)的源代码，之后将全部放上。
 
-目前已经开放测试：访问<a href="http://monitor.usau-buy.me/">电商价格监控系统</a>便可体验。
+**目前已经开放测试：访问<a href="http://monitor.usau-buy.me/">电商价格监控系统</a>便可体验。**
 
 # 项目依赖
 
