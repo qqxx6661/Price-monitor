@@ -11,7 +11,7 @@ monitor price changes in JD.com, users can set expected price of specific item. 
 
 Amazon-CN, Amazon-US, Tmall will be supported in the future
 
-该项目由**网页端(php)-----Mysql-----后台监控(Python)**组成。
+该项目由网页端      (php)-----Mysql-----后台监控(Python)      组成。
 
 目前库中只有后台监控(price-monitor-server)的源代码，之后将全部放上。
 
