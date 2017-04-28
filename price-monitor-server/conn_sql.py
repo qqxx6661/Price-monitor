@@ -4,7 +4,6 @@ from crawl import Crawl
 from send_email import SendEmail
 import time
 
-
 class ItemQuery(object):
 
     def read_itemid(self):
@@ -20,8 +19,8 @@ class ItemQuery(object):
 
     def crawl_name_price(self, item_id):
         crawl = Crawl()
-        item_price_inner = crawl.get_price(item_id)
         item_name_inner = crawl.get_name(item_id)
+        item_price_inner = crawl.get_price(item_id)
         return item_name_inner, item_price_inner
 
     def write_item_info(self, item_id, item_name_inner, item_price_inner):
@@ -55,15 +54,15 @@ class ItemQuery(object):
         cursor.close()
 
 if __name__ == '__main__':
-    conn = mysql.connector.connect(user='root', password='root', database='pricemonitor')
-    query = ItemQuery()
-    items = query.read_itemid()
-    for item in items:
-        item = str(item)  # 可以改进,items为tuple
-        item = item[1:-2]
-        item_name, item_price = query.crawl_name_price(item)
-        query.write_item_info(item, item_name, item_price)
-        query.compare_send_email(item, item_price, item_name)
-        print '----------------------'
-        time.sleep(5)
-    conn.close()
+    while(True):
+        conn = mysql.connector.connect(user='root', password='root', database='pricemonitor')
+        query = ItemQuery()
+        items = query.read_itemid()
+        for item in items:
+            item = str(item)  # 可以改进,items为tuple
+            item = item[1:-2]
+            item_name, item_price = query.crawl_name_price(item)
+            query.write_item_info(item, item_name, item_price)
+            query.compare_send_email(item, item_price, item_name)
+            print '----------------------'
+        conn.close()

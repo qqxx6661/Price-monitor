@@ -9,12 +9,12 @@ HEADER = {
 }
 
 PROXYPOOL_CONFIG = {
-    'MIN_IP_NUM': 5000,  # 代理池中最小可用ip数量，若检测到小于此数量，启动爬虫
-    'DELETE_TIME': 24 * 60,  # minutes, 删除更新时间在该时间之前的ip
+    'MIN_IP_NUM': 50,  # 代理池中最小可用ip数量，若检测到小于此数量，启动爬虫
+    'DELETE_TIME': 30,  # minutes, 删除更新时间在该时间之前的ip
     'DELETE_SCORE': -5,  # 删除分数小于该分值的ip
     'UPDATE_TIME': 10,  # minutes, 重新验证该时间之前的ip
-    'CRAWL_TIME': 30,  # minutes, 计算可用ip数量时, 取距当前多少分钟内验证过的ip
-    'SLEEP_TIME': 1800  # second, 两次爬取间隔
+    'CRAWL_TIME': 15,  # minutes, 计算可用ip数量时, 取距当前多少分钟内验证过的ip
+    'SLEEP_TIME': 300  # second, 两次爬取间隔
 }
 
 API_CONFIG = {
