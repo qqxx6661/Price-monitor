@@ -15,7 +15,7 @@ class Crawl(object):
             try:
                 r = requests.get(url, headers=self.headers, proxies=proxies, timeout=5)
             except requests.exceptions.ProxyError as e:
-                print '明明是http代理非要装作https代理', e
+                print '明明是http代理非要装作https代理，重新更换代理', e
                 continue
             except requests.exceptions.ConnectionError as e:
                 print '代理失效，重新获取代理', e
@@ -39,6 +39,9 @@ class Crawl(object):
                 r = requests.get(url, headers=self.headers, proxies=proxies, timeout=5)
             except requests.exceptions.ProxyError as e:
                 print '代理失效，重新获取代理', e
+                continue
+            except requests.exceptions.SSLError as e:
+                print '代理需要SSL，重新更换代理', e
                 continue
             selector = etree.HTML(r.text)
             name = selector.xpath("//*[@class='sku-name']/text()")  # list
