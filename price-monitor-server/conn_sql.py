@@ -47,6 +47,7 @@ class ItemQuery(object):
             user_email = cursor.fetchone()
             user_email = str(user_email[0])  # 改进
             email_text = '您监控的商品：' + str(item_name_inner) + '，现在价格为：' + str(item_price_inner) + '，您设定的价格为：' + str(user_price[0]) + '  赶紧抢购吧！'
+            email_text = email_text.encode('utf-8')
             email_zhuti = '您监控的商品降价了！'
             sendemail = SendEmail(email_text, 'admin', 'user', email_zhuti, user_email)
             sendemail.send()
