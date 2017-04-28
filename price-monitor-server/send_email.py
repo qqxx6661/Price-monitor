@@ -38,7 +38,8 @@ class SendEmail(object):
         server.sendmail(self.from_addr, [self.to_addr], self.msg.as_string())
         server.quit()
 
-# sendemail = SendEmail('111', 'wo', 'ni', 'zhuti', 'yangzd1993@foxmail.com')
-# sendemail.send()
+if __name__ == '__main__':
+    sendemail = SendEmail('111', 'wo', 'ni', 'zhuti', 'yangzd1993@foxmail.com')
+    sendemail.send()
 
 

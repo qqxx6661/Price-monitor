@@ -11,6 +11,8 @@ class ItemQuery(object):
         cursor = conn.cursor()
         cursor.execute('select item_id from monitor where status=1')
         items_inner = cursor.fetchall()
+        localtime = time.asctime(time.localtime(time.time()))
+        print '本地时间为 :', localtime
         print '待查询的商品ID：', items_inner
         print '----------------------'
         cursor.close()
@@ -52,16 +54,16 @@ class ItemQuery(object):
             print '该商品降价，已发送邮件提醒用户'
         cursor.close()
 
-
-conn = mysql.connector.connect(user='root', password='root', database='pricemonitor')
-query = ItemQuery()
-items = query.read_itemid()
-for item in items:
-    item = str(item)  # 可以改进,items为tuple
-    item = item[1:-2]
-    item_name, item_price = query.crawl_name_price(item)
-    query.write_item_info(item, item_name, item_price)
-    query.compare_send_email(item, item_price, item_name)
-    print '----------------------'
-    time.sleep(2)
-conn.close()
+if __name__ == '__main__':
+    conn = mysql.connector.connect(user='root', password='root', database='pricemonitor')
+    query = ItemQuery()
+    items = query.read_itemid()
+    for item in items:
+        item = str(item)  # 可以改进,items为tuple
+        item = item[1:-2]
+        item_name, item_price = query.crawl_name_price(item)
+        query.write_item_info(item, item_name, item_price)
+        query.compare_send_email(item, item_price, item_name)
+        print '----------------------'
+        time.sleep(5)
+    conn.close()
