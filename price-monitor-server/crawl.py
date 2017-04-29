@@ -38,6 +38,9 @@ class Crawl(object):
             try:
                 r = requests.get(url, headers=self.headers, proxies=proxies, timeout=10)
             except requests.exceptions.ProxyError as e:
+                print '超时，重新获取代理', e
+                continue
+            except requests.exceptions.ConnectionError as e:
                 print '代理失效，重新获取代理', e
                 continue
             except requests.exceptions.SSLError as e:
