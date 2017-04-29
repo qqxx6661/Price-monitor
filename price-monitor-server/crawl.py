@@ -11,14 +11,14 @@ class Crawl(object):
         print '该商品价格URL：', url
         while(True):
             proxies = self.use_proxy()
-            print '本次使用：', proxies
+            # print '本次使用：', proxies
             try:
                 r = requests.get(url, headers=self.headers, proxies=proxies, timeout=10)
             except requests.exceptions.ProxyError as e:
-                print '超时，重新更换代理', e
+                print '超时，更换价格代理'
                 continue
             except requests.exceptions.ConnectionError as e:
-                print '代理失效，重新获取代理', e
+                print '代理失效，更换价格代理'
                 continue
             price = r.text
             price = price[2:-4]
@@ -27,24 +27,27 @@ class Crawl(object):
                 print '价格js为：', js
                 return js['p']
             except ValueError as e:
-                print '该代理获取价格失败，重新获取代理', e
+                print '该代理获取价格失败，更换价格代理'
                 continue
 
     def get_name(self, item_id_inner):
         url = 'https://item.jd.com/' + item_id_inner + '.html'
         while(True):
             proxies = self.use_proxy()
-            print '本次使用：', proxies
+            # print '本次使用：', proxies
             try:
                 r = requests.get(url, headers=self.headers, proxies=proxies, timeout=10)
             except requests.exceptions.ProxyError as e:
-                print '超时，重新获取代理', e
+                print '超时，更换名称代理'
+                continue
+            except requests.exceptions.ReadTimeout as e:
+                print '读取Timeout失败，更换名称代理'
                 continue
             except requests.exceptions.ConnectionError as e:
-                print '代理失效，重新获取代理', e
+                print '代理失效，更换名称代理'
                 continue
             except requests.exceptions.SSLError as e:
-                print '代理需要SSL，重新更换代理', e
+                print '代理需要SSL，更换名称代理'
                 continue
             selector = etree.HTML(r.text)
             name = selector.xpath("//*[@class='sku-name']/text()")  # list
