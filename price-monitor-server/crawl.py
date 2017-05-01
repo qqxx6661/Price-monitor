@@ -11,9 +11,12 @@ class Crawl(object):
         print '该商品价格URL：', url
         while(True):
             proxies = self.use_proxy()
-            # print '本次使用：', proxies
+            print '本次使用：', proxies
             try:
                 r = requests.get(url, headers=self.headers, proxies=proxies, timeout=10)
+            except requests.exceptions.ReadTimeout as e:
+                print '读取Timeout失败，更换价格代理'
+                continue
             except requests.exceptions.ProxyError as e:
                 print '超时，更换价格代理'
                 continue
@@ -34,7 +37,7 @@ class Crawl(object):
         url = 'https://item.jd.com/' + item_id_inner + '.html'
         while(True):
             proxies = self.use_proxy()
-            # print '本次使用：', proxies
+            print '本次使用：', proxies
             try:
                 r = requests.get(url, headers=self.headers, proxies=proxies, timeout=10)
             except requests.exceptions.ProxyError as e:
