@@ -3,6 +3,8 @@ import mysql.connector
 from crawl import Crawl
 from send_email import SendEmail
 import time
+import requests
+import json
 
 class ItemQuery(object):
 
@@ -11,17 +13,21 @@ class ItemQuery(object):
         cursor.execute('select item_id from monitor where status=1')
         items_inner = cursor.fetchall()
         localtime = time.asctime(time.localtime(time.time()))
-        print '本地时间为 :', localtime
-        print '待查询的商品ID：', items_inner
+        print 'Local Time:', localtime
+        print 'All item:', items_inner
         print '----------------------'
         cursor.close()
         return items_inner
 
-    def crawl_name_price(self, item_id):
+    def crawl_name(self, item_id, proxy_inner):
         crawl = Crawl()
-        item_name_inner = crawl.get_name(item_id)
-        item_price_inner = crawl.get_price(item_id)
-        return item_name_inner, item_price_inner
+        item_name_inner = crawl.get_name(item_id, proxy_inner)
+        return item_name_inner
+
+    def crawl_price(self, item_id, proxy_inner):
+        crawl = Crawl()
+        item_price_inner = crawl.get_price(item_id, proxy_inner)
+        return item_price_inner
 
     def write_item_info(self, item_id, item_name_inner, item_price_inner):
         item_name_inner = '\'' + item_name_inner + '\''  # sql插入varchar前后有引号，可以改进
@@ -54,16 +60,70 @@ class ItemQuery(object):
             print '该商品降价，已发送邮件提醒用户'
         cursor.close()
 
+    def use_proxy(self):
+        while(1):
+            url = 'http://localhost:8000/&type=3'
+            try:
+                r = requests.get(url, timeout=5)
+            except IndexError:
+                print 'No proxy now, retrying'
+                continue
+            js = json.loads(r.text)
+            proxies_inner = {
+                'http': 'http://' + js[0],
+                'https': 'https://' + js[0],
+            }
+            return proxies_inner
+
 if __name__ == '__main__':
-    while(True):
+    while(1):
+        start = time.time()
         conn = mysql.connector.connect(user='root', password='root', database='pricemonitor')
         query = ItemQuery()
         items = query.read_itemid()
+        proxy = query.use_proxy()
         for item in items:
             item = str(item)  # 可以改进,items为tuple
             item = item[1:-2]
-            item_name, item_price = query.crawl_name_price(item)
+            while(1):
+                try:
+                    item_name = query.crawl_name(item, proxy)
+                    break
+                except requests.exceptions.ReadTimeout:
+                    print 'Read Timeout, change name proxy'
+                    proxy = query.use_proxy()
+                    continue
+                except requests.exceptions.ProxyError:
+                    print 'Proxy Timeout, change name proxy'
+                    proxy = query.use_proxy()
+                    continue
+                except requests.exceptions.ConnectionError:
+                    print 'Proxy Failure, change name proxy'
+                    proxy = query.use_proxy()
+                    continue
+            while(1):
+                try:
+                    item_price = query.crawl_price(item, proxy)
+                    break
+                except requests.exceptions.ReadTimeout:
+                    print 'Read Timeout, change price proxy'
+                    proxy = query.use_proxy()
+                    continue
+                except requests.exceptions.ProxyError:
+                    print 'Proxy Timeout, change price proxy'
+                    proxy = query.use_proxy()
+                    continue
+                except requests.exceptions.ConnectionError:
+                    print 'Proxy Failure, change price proxy'
+                    proxy = query.use_proxy()
+                    continue
+                except ValueError:
+                    print 'Proxy cannot get price, change price proxy'
+                    proxy = query.use_proxy()
+                    continue
             query.write_item_info(item, item_name, item_price)
             query.compare_send_email(item, item_price, item_name)
-            print '----------------------'
+            print '------------------------------------------------------------'
         conn.close()
+        end = time.time()
+        print end - start
