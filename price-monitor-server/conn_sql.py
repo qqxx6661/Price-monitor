@@ -33,7 +33,7 @@ class ItemQuery(object):
         item_name_inner = '\'' + item_name_inner + '\''  # sql插入varchar前后有引号，可以改进
         cursor = conn.cursor()
         sql = 'update monitor set item_name = %s, item_price = %s where item_id = %s' % (item_name_inner, item_price_inner, item_id)
-        print '更新语句为：', sql.encode('utf-8')  # ascii错误解决
+        print 'SQL update:', sql.encode('utf-8')  # ascii错误解决
         cursor.execute(sql)
         conn.commit()
         cursor.close()
@@ -41,7 +41,7 @@ class ItemQuery(object):
     def compare_send_email(self, item_id, item_price_inner, item_name_inner):
         cursor = conn.cursor()
         sql = 'select user_price from monitor where item_id = %s' % item_id
-        print '查询语句为：', sql
+        print 'SQL query: ', sql
         cursor.execute(sql)
         user_price = cursor.fetchone()  # user_price: tuple user_price[0]: decimal item_price: unicode
         if float(user_price[0]) >= float(item_price_inner):  # 转为float才可以对比，可以改进
@@ -126,4 +126,4 @@ if __name__ == '__main__':
             print '------------------------------------------------------------'
         conn.close()
         end = time.time()
-        print end - start
+        print 'Total time(sec)', end - start
