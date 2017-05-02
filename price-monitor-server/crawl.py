@@ -28,14 +28,16 @@ class Crawl(object):
         try:
             name = name[0].strip()
         except IndexError as e:
-            print e
+            print e, name
             print 'Change method to catch name'
             try:
                 name = selector.xpath("//*[@id='name']/h1/text()")
                 name = name[0].strip()
             except IndexError as e:
-                print e
+                print e, name
                 print 'Catch name error'
+                name = '本次抓取该商品名称失败'
+                return name
         return name  # 遇到return无需break了！
 
 

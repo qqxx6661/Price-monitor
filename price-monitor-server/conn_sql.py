@@ -45,7 +45,7 @@ class ItemQuery(object):
         cursor.execute(sql)
         user_price = cursor.fetchone()  # user_price: tuple user_price[0]: decimal item_price: unicode
         if float(user_price[0]) >= float(item_price_inner):  # 转为float才可以对比，可以改进
-            sql = 'update monitor set status = 0 where item_id = %s' % item_id
+            sql = 'update monitor set status = 0 where item_id = %s' % item_id ### 修改：不同用户同一商品
             cursor.execute(sql)
             conn.commit()
             sql = 'select user_email from user where user_id = ( select user_id from monitor where item_id = %s )' % item_id
@@ -63,16 +63,16 @@ class ItemQuery(object):
     def use_proxy(self):
         while(1):
             url = 'http://localhost:8000/&type=3'
-            try:
-                r = requests.get(url, timeout=5)
+            r = requests.get(url, timeout=5)
+            js = json.loads(r.text)
+            try:    
+                proxies_inner = {
+                    'http': 'http://' + js[0],
+                    'https': 'https://' + js[0],
+                }
             except IndexError:
                 print 'No proxy now, retrying'
                 continue
-            js = json.loads(r.text)
-            proxies_inner = {
-                'http': 'http://' + js[0],
-                'https': 'https://' + js[0],
-            }
             return proxies_inner
 
 if __name__ == '__main__':
