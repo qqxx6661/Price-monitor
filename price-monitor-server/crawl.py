@@ -39,14 +39,8 @@ class Crawl(object):
             except IndexError as e:
                 print e, name
                 print 'Catch name error'
-                name = '本次抓取该商品名称失败'
+                name = '本次抓取该商品名称失败，请检查商品ID'
                 return name
         return name  # 遇到return无需break了！
 
 
-
-
-if __name__ == '__main__':
-    crawl = Crawl()
-    proxies_test = crawl.use_proxy()
-    print proxies_test
