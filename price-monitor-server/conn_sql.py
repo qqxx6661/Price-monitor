@@ -104,14 +104,20 @@ if __name__ == '__main__':
                 except requests.exceptions.ReadTimeout:
                     print 'Read Timeout, change name proxy'
                     proxy = query.use_proxy()
+                    localtime = time.asctime(time.localtime(time.time()))
+                    print 'Local Time:', localtime
                     continue
                 except requests.exceptions.ProxyError:
                     print 'Proxy Timeout, change name proxy'
                     proxy = query.use_proxy()
+                    localtime = time.asctime(time.localtime(time.time()))
+                    print 'Local Time:', localtime
                     continue
                 except requests.exceptions.ConnectionError:
                     print 'Proxy Failure, change name proxy'
                     proxy = query.use_proxy()
+                    localtime = time.asctime(time.localtime(time.time()))
+                    print 'Local Time:', localtime
                     continue
             while(1):
                 try:
@@ -120,18 +126,26 @@ if __name__ == '__main__':
                 except requests.exceptions.ReadTimeout:
                     print 'Read Timeout, change price proxy'
                     proxy = query.use_proxy()
+                    localtime = time.asctime(time.localtime(time.time()))
+                    print 'Local Time:', localtime
                     continue
                 except requests.exceptions.ProxyError:
                     print 'Proxy Timeout, change price proxy'
                     proxy = query.use_proxy()
+                    localtime = time.asctime(time.localtime(time.time()))
+                    print 'Local Time:', localtime
                     continue
                 except requests.exceptions.ConnectionError:
                     print 'Proxy Failure, change price proxy'
                     proxy = query.use_proxy()
+                    localtime = time.asctime(time.localtime(time.time()))
+                    print 'Local Time:', localtime
                     continue
                 except ValueError:
                     print 'Proxy cannot get price, change price proxy'
                     proxy = query.use_proxy()
+                    localtime = time.asctime(time.localtime(time.time()))
+                    print 'Local Time:', localtime
                     continue
             query.write_item_info(user_id, item_id, item_name, item_price)
             query.compare_send_email(user_id, item_id, item_price, item_name)
