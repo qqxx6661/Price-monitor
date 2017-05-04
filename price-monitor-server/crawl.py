@@ -11,7 +11,7 @@ class Crawl(object):
         # print '该商品价格URL：', url
         proxies = proxy_inner
         print 'Use proxy:', proxies
-        r = requests.get(url, headers=self.headers, proxies=proxies, timeout=10)
+        r = requests.get(url, headers=self.headers, proxies=proxies, timeout=6)
         price = r.text
         price = price[2:-4]
         js = json.loads(str(price))
@@ -22,7 +22,7 @@ class Crawl(object):
         url = 'https://item.jd.com/' + item_id_inner + '.html'
         proxies = proxy_inner
         print 'Use proxy:', proxies
-        r = requests.get(url, headers=self.headers, proxies=proxies, timeout=10)
+        r = requests.get(url, headers=self.headers, proxies=proxies, timeout=6)
         selector = etree.HTML(r.text)
         name = selector.xpath("//*[@class='sku-name']/text()")  # list
         try:

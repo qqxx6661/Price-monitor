@@ -69,15 +69,20 @@ class ItemQuery(object):
     def use_proxy(self):
         while(1):
             url = 'http://localhost:8000/&type=3'
-            r = requests.get(url, timeout=5)
-            js = json.loads(r.text)
-            try:    
+            try:
+                r = requests.get(url, timeout=5)
+                js = json.loads(r.text)
                 proxies_inner = {
                     'http': 'http://' + js[0],
                     'https': 'https://' + js[0],
                 }
             except IndexError:
+                print 'No useable proxy now, retrying'
+                time.sleep(5)
+                continue
+            except requests.exceptions.ConnectionError:
                 print 'No proxy now, retrying'
+                time.sleep(5)
                 continue
             return proxies_inner
 
@@ -133,5 +138,5 @@ if __name__ == '__main__':
             print '------------------------------------------------------------'
         conn.close()
         end = time.time()
-        print 'Total time(sec)', end - start
+        print 'Total time(sec)', end - start, 'Take a break!'
         time.sleep(30)
