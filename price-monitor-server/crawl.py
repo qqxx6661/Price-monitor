@@ -44,3 +44,5 @@ class Crawl(object):
         return name  # 遇到return无需break了！
 
 
+if __name__ == '__main__':
+    pass

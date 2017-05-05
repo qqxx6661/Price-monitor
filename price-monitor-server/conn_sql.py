@@ -34,7 +34,7 @@ class ItemQuery(object):
     def write_item_info(self, user_id_inner, item_id_inner, item_name_inner, item_price_inner):
         cursor = self.conn.cursor()
         sql = 'update monitor set item_name = \'%s\', item_price = %s where item_id = %s and user_id = %s' % (item_name_inner, item_price_inner, item_id_inner, user_id_inner)
-        print 'SQL update:', sql  # .encode('utf-8')  # ascii错误解决
+        print 'SQL update:', sql.encode('utf-8')  # ascii错误解决，不加的话控制台中文乱码
         cursor.execute(sql)
         self.conn.commit()
         cursor.close()
@@ -45,6 +45,10 @@ class ItemQuery(object):
         print 'SQL query: ', sql
         cursor.execute(sql)
         user_price = cursor.fetchone()  # user_price: tuple, user_price[0]: decimal, item_price: unicode
+        if float(item_price_inner) == -1.00:  # 抓取失败不发邮件，状态依然为1
+            print 'Wrong item price -1, skip this round.'
+            cursor.close()
+            return
         if float(user_price[0]) >= float(item_price_inner):  # 转为float才可以对比，可以改进
             try:
                 sql = 'update monitor set status = 0 where item_id = %s and user_id = %s' % (item_id_inner, user_id_inner)
@@ -53,8 +57,9 @@ class ItemQuery(object):
                 sql = 'select user_email from user where user_id = %s' % user_id_inner
                 cursor.execute(sql)
                 user_email = cursor.fetchone()
-                user_email = str(user_email[0]) # linux可用，win会报下面的错误
-                email_text = '您监控的商品：' + str(item_name_inner) + '，现在价格为：' + str(item_price_inner) + '，您设定的价格为：' + str(user_price[0]) + '  赶紧抢购吧！'
+                user_email = str(user_email[0])  # linux可用，win会报下面的错误
+                item_url = 'https://item.jd.com/' + item_id_inner + '.html'
+                email_text = '您监控的商品：' + str(item_name_inner) + '，' + item_url + '现在价格为：' + str(item_price_inner) + '，您设定的价格为：' + str(user_price[0]) + '  赶紧抢购吧！'
                 email_text = email_text.encode('utf-8')
                 email_zhuti = '您监控的商品降价了！'
                 sendemail = SendEmail(email_text, 'admin', 'user', email_zhuti, user_email)
@@ -153,7 +158,7 @@ class ItemQuery(object):
             # self.conn.close()  # 由于conn为静态变量，此处不能关闭
             end = time.time()
             self.start_flag = 1
-            print 'Total time(sec)', end - start, 'Take a break for:', break_time
+            print 'Total time (sec)', end - start, 'Take a break for (sec):', break_time
             time.sleep(break_time)
 
 if __name__ == '__main__':
