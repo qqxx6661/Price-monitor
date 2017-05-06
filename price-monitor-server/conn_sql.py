@@ -181,7 +181,7 @@ class ItemQuery(object):
                     except ValueError:
                         proxy = query.use_proxy()
                         localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy cannot get price, change price proxy.', localtime
+                        print 'Proxy cannot get jd price, change price proxy.', localtime
                         continue
                 query.write_item_info(user_id, item_id, item_name, item_price)
                 query.compare_send_email(user_id, item_id, item_price, item_name)
