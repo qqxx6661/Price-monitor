@@ -12,7 +12,7 @@ class ItemQuery(object):
     start_flag = 0  # 记录是否为首轮
     def read_itemid(self):
         cursor = self.conn.cursor()
-        cursor.execute('select item_id, user_id from monitor where status=1')
+        cursor.execute('select item_id, user_id, mall_name from monitor where status=1')
         items_inner = cursor.fetchall()
         localtime = time.asctime(time.localtime(time.time()))
         print 'Local Time:', localtime
@@ -21,15 +21,37 @@ class ItemQuery(object):
         cursor.close()
         return items_inner
 
-    def crawl_name(self, item_id_inner, proxy_inner):
-        crawl = Crawl()
-        item_name_inner = crawl.get_name_jd(item_id_inner, proxy_inner)
-        return item_name_inner
+    def crawl_name(self, item_id_inner, proxy_inner, mall_name_inner):
+        if mall_name_inner == 'jd':
+            crawl = Crawl()
+            item_name_inner = crawl.get_name_jd(item_id_inner, proxy_inner)
+            return item_name_inner
+        elif mall_name_inner == 'tm':
+            crawl = Crawl()
+            item_name_inner = crawl.get_name_tm(item_id_inner, proxy_inner)
+            return item_name_inner
+        elif mall_name_inner == 'tb':
+            crawl = Crawl()
+            item_name_inner = crawl.get_name_tb(item_id_inner, proxy_inner)
+            return item_name_inner
+        else:
+            return '该商品未设定商城名'
 
-    def crawl_price(self, item_id_inner, proxy_inner):
-        crawl = Crawl()
-        item_price_inner = crawl.get_price_jd(item_id_inner, proxy_inner)
-        return item_price_inner
+    def crawl_price(self, item_id_inner, proxy_inner, mall_name_inner):
+        if mall_name_inner == 'jd':
+            crawl = Crawl()
+            item_price_inner = crawl.get_price_jd(item_id_inner, proxy_inner)
+            return item_price_inner
+        elif mall_name_inner == 'tm':
+            crawl = Crawl()
+            item_price_inner = crawl.get_price_tm(item_id_inner, proxy_inner)
+            return item_price_inner
+        elif mall_name_inner == 'tb':
+            crawl = Crawl()
+            item_price_inner = crawl.get_price_tb(item_id_inner, proxy_inner)
+            return item_price_inner
+        else:
+            return '-1'
 
     def write_item_info(self, user_id_inner, item_id_inner, item_name_inner, item_price_inner):
         cursor = self.conn.cursor()
@@ -46,10 +68,11 @@ class ItemQuery(object):
         cursor.execute(sql)
         user_price = cursor.fetchone()  # user_price: tuple, user_price[0]: decimal, item_price: unicode
         if float(item_price_inner) == -1.00:  # 抓取失败不发邮件，状态依然为1
-        	note = '商品ID不存在或已下架，请检查。'
+            note = '商品已下架或ID不存在，请检查。'
             sql = 'update monitor set note = \'%s\' where item_id = %s and user_id = %s' % (note, item_id_inner, user_id_inner)
             print 'Wrong item price: -1, skip this round.'
             cursor.execute(sql)
+            self.conn.commit()
             cursor.close()
             return
         if float(user_price[0]) >= float(item_price_inner):  # 转为float才可以对比，可以改进
@@ -116,9 +139,10 @@ class ItemQuery(object):
                 item_id = str(item[0])
                 # item_id = item_id[1:-2]  # 现在啊同时获取用户和商品ID后不需要这条了
                 user_id = str(item[1])
+                mall_name = str(item[2])
                 while (1):
                     try:
-                        item_name = query.crawl_name(item_id, proxy)
+                        item_name = query.crawl_name(item_id, proxy, mall_name)
                         break
                     except requests.exceptions.ReadTimeout:
                         proxy = query.use_proxy()
@@ -137,7 +161,7 @@ class ItemQuery(object):
                         continue
                 while (1):
                     try:
-                        item_price = query.crawl_price(item_id, proxy)
+                        item_price = query.crawl_price(item_id, proxy, mall_name)
                         break
                     except requests.exceptions.ReadTimeout:
                         proxy = query.use_proxy()

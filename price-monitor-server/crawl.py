@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
+import re
 from lxml import etree
 
 
@@ -44,30 +45,53 @@ class Crawl(object):
                 return name
         return name  # 遇到return无需break了！
 
-    def get_name_price_tb(self):
-        url = 'https://item.taobao.com/item.htm?id=530750274067'  # + item_id_inner
-        # proxies = proxy_inner
+    def get_name_tb(self, item_id_inner, proxy_inner):
+        url = 'https://item.taobao.com/item.htm?id=' + item_id_inner
+        proxies = proxy_inner
         # print 'Use proxy:', proxies
-        r = requests.get(url, headers=self.headers, timeout=6)
+        r = requests.get(url, headers=self.headers, proxies=proxies, timeout=6)
         selector = etree.HTML(r.text)
         name = selector.xpath("//*[@property='og:title']/@content")  # list
-        price = selector.xpath("//*[@class='tb-rmb-num']/text()")  # list
-        print name[0]  # unicode
-        print price[3]  # str
+        print name  # unicode, str
+        return name[0]  # try except
 
-    def get_name_price_tm(self):
-        url = 'https://detail.tmall.com/item.htm?id=525222206060'  # + item_id_inner
-        # proxies = proxy_inner
+    def get_price_tb(self, item_id_inner, proxy_inner):
+        url = 'https://item.taobao.com/item.htm?id=' + item_id_inner
+        proxies = proxy_inner
         # print 'Use proxy:', proxies
-        r = requests.get(url, headers=self.headers, timeout=6)
-        print r.text
+        r = requests.get(url, headers=self.headers, proxies=proxies, timeout=6)
         selector = etree.HTML(r.text)
-        name = selector.xpath("//*[@id='J_DetailMeta']/div[1]/div[1]/div/div[1]/h1")  # list
-        price = selector.xpath("//*[@id='J_PromoPrice']/dd/div/span")  # list
-        print name[0]  # unicode
-        print price[3]  # str
+        price = selector.xpath("//*[@class='tb-rmb-num']/text()")  # list
+        print price  # unicode, str
+        return price[3]
+
+    def get_name_tm(self, item_id_inner, proxy_inner):
+        url = 'https://detail.tmall.com/item.htm?id=' + item_id_inner
+        proxies = proxy_inner
+        # print 'Use proxy:', proxies
+        r = requests.get(url, headers=self.headers, proxies=proxies, timeout=6)
+        # print r.text
+        selector = etree.HTML(r.text)
+        name = selector.xpath("//*[@name='keywords']/@content")  # list
+        # print name[0], price
+        return name
+
+    def get_price_tm(self, item_id_inner, proxy_inner):
+        url = 'https://detail.tmall.com/item.htm?id=' + item_id_inner
+        proxies = proxy_inner
+        # print 'Use proxy:', proxies
+        r = requests.get(url, headers=self.headers, proxies=proxies, timeout=6)
+        # print r.text
+        selector = etree.HTML(r.text)
+        price = selector.xpath("//*[@id='J_DetailMeta']/div[1]/script[3]/text()")  # list
+        price = re.findall(r'"defaultItemPrice":"(.*)"double', price[0])  # '699.00",'   list
+        price = price[0][:-2]  # '699.00'
+        # print name[0], price
+        return price
 
 if __name__ == '__main__':
     crawl = Crawl()
-    # crawl.get_name_price_tb()
-    crawl.get_name_price_tm()
+    crawl.get_name_tb()
+    crawl.get_price_tb()
+    crawl.get_name_tm()
+    crawl.get_price_tm()
