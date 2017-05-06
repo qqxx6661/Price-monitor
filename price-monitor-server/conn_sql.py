@@ -46,7 +46,10 @@ class ItemQuery(object):
         cursor.execute(sql)
         user_price = cursor.fetchone()  # user_price: tuple, user_price[0]: decimal, item_price: unicode
         if float(item_price_inner) == -1.00:  # 抓取失败不发邮件，状态依然为1
-            print 'Wrong item price -1, skip this round.'
+        	note = '商品ID不存在或已下架，请检查。'
+            sql = 'update monitor set note = \'%s\' where item_id = %s and user_id = %s' % (note, item_id_inner, user_id_inner)
+            print 'Wrong item price: -1, skip this round.'
+            cursor.execute(sql)
             cursor.close()
             return
         if float(user_price[0]) >= float(item_price_inner):  # 转为float才可以对比，可以改进
