@@ -51,6 +51,8 @@ price-monitor
 
 - 运行price-monitor-server/ProxyPool下的proxypool.py，开启代理抓取。感谢该代理池原作者。
 
+- 如果是第一次运行代理池，由于代理池数据库之前没有数据，所以需要等待片刻。
+
 - 运行price-monitor-server/下的main.py
 
 

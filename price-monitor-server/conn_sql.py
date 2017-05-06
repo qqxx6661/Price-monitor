@@ -23,12 +23,12 @@ class ItemQuery(object):
 
     def crawl_name(self, item_id_inner, proxy_inner):
         crawl = Crawl()
-        item_name_inner = crawl.get_name(item_id_inner, proxy_inner)
+        item_name_inner = crawl.get_name_jd(item_id_inner, proxy_inner)
         return item_name_inner
 
     def crawl_price(self, item_id_inner, proxy_inner):
         crawl = Crawl()
-        item_price_inner = crawl.get_price(item_id_inner, proxy_inner)
+        item_price_inner = crawl.get_price_jd(item_id_inner, proxy_inner)
         return item_price_inner
 
     def write_item_info(self, user_id_inner, item_id_inner, item_name_inner, item_price_inner):
@@ -92,6 +92,10 @@ class ItemQuery(object):
                 time.sleep(5)
                 continue
             except requests.exceptions.ConnectionError:
+                print 'No proxy now, retrying'
+                time.sleep(5)
+                continue
+            except requests.exceptions.ReadTimeout:
                 print 'No proxy now, retrying'
                 time.sleep(5)
                 continue
