@@ -21,6 +21,17 @@ class ItemQuery(object):
         cursor.close()
         return items_inner
 
+    def read_itemid_temp(self):
+        cursor = self.conn.cursor()
+        cursor.execute('select item_id, user_id, mall_name from monitor where item_price is null and status = 1')
+        items_inner = cursor.fetchall()
+        localtime = time.asctime(time.localtime(time.time()))
+        print 'Local Time:', localtime
+        print 'All item:', items_inner
+        print '----------------------'
+        cursor.close()
+        return items_inner
+
     def crawl_name(self, item_id_inner, proxy_inner, mall_name_inner):
         if mall_name_inner == 'jd':
             crawl = Crawl()
