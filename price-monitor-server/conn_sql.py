@@ -30,13 +30,13 @@ class ItemQuery(object):
             #crawl = Crawl()
             #item_name_inner = crawl.get_name_tm(item_id_inner, proxy_inner)
             #return item_name_inner
-            temp_item_name = '天猫商品暂不支持监控，过两天上线'
+            temp_item_name = '天猫价格抓取正在攻克中，名称暂不显示'
             return temp_item_name
         elif mall_name_inner == 'tb':
             #crawl = Crawl()
             #item_name_inner = crawl.get_name_tb(item_id_inner, proxy_inner)
             #return item_name_inner
-            temp_item_name = '天猫商品暂不支持监控，过两天上线'
+            temp_item_name = '淘宝价格抓取正在攻克中，名称暂不显示'
             return temp_item_name
         else:
             return '该商品未设定商城名'
@@ -64,19 +64,28 @@ class ItemQuery(object):
     def write_item_info(self, user_id_inner, item_id_inner, item_name_inner, item_price_inner):
         cursor = self.conn.cursor()
         sql = 'update monitor set item_name = \'%s\', item_price = %s where item_id = %s and user_id = %s' % (item_name_inner, item_price_inner, item_id_inner, user_id_inner)
-        print 'SQL update:', sql.encode('utf-8')  # ascii错误解决，不加的话控制台中文乱码
+        print 'SQL update:', sql.encode('utf-8')  # ascii错误解决，不加的话控制台中文乱码, 记得添加回去
         cursor.execute(sql)
         self.conn.commit()
         cursor.close()
 
     def compare_send_email(self, user_id_inner, item_id_inner, item_price_inner, item_name_inner):
         cursor = self.conn.cursor()
-        sql = 'select user_price from monitor where item_id = %s and user_id = %s' % (item_id_inner, user_id_inner)
-        print 'SQL query: ', sql
-        cursor.execute(sql)
-        user_price = cursor.fetchone()  # user_price: tuple, user_price[0]: decimal, item_price: unicode
-        if float(item_price_inner) == -1.00:  # 抓取失败不发邮件，状态依然为1
-            note = '商品已下架或ID不存在，请检查。'
+        try:
+            sql = 'select user_price from monitor where item_id = %s and user_id = %s' % (item_id_inner, user_id_inner)
+            # print 'SQL query: ', sql
+            cursor.execute(sql)
+            user_price = cursor.fetchone()  # user_price: tuple, user_price[0]: decimal, item_price: unicode
+        except mysql.connector.errors.InternalError:
+            note = '拥有重复商品，每个商品只能有一个监控，否则会导致监控失败。'
+            sql = 'update monitor set note = \'%s\' where item_id = %s and user_id = %s' % (note, item_id_inner, user_id_inner)
+            print 'Have same item id in one user, skip this round.'
+            cursor.execute(sql)
+            self.conn.commit()
+            cursor.close()
+            return
+        if float(item_price_inner) == -1.00:  # 抓取到-1不发邮件，状态依然为1
+            note = '商品已经下架或者ID不正确。'
             sql = 'update monitor set note = \'%s\' where item_id = %s and user_id = %s' % (note, item_id_inner, user_id_inner)
             print 'Wrong item price: -1, skip this round.'
             cursor.execute(sql)
@@ -170,7 +179,7 @@ class ItemQuery(object):
                     except IndexError:
                         proxy = query.use_proxy()
                         localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy cannot get tb name, change price proxy.', localtime
+                        print 'Proxy cannot get tb name, change name proxy.', localtime
                         continue
                 while (1):
                     try:
@@ -195,6 +204,11 @@ class ItemQuery(object):
                         proxy = query.use_proxy()
                         localtime = time.asctime(time.localtime(time.time()))
                         print 'Proxy cannot get jd price, change price proxy.', localtime
+                        continue
+                    except IndexError:
+                        proxy = query.use_proxy()
+                        localtime = time.asctime(time.localtime(time.time()))
+                        print 'Proxy cannot get tb price, change price proxy.', localtime
                         continue
                 query.write_item_info(user_id, item_id, item_name, item_price)
                 query.compare_send_email(user_id, item_id, item_price, item_name)

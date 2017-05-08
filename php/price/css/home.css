@@ -1,0 +1,149 @@
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+a {
+	text-decoration: none;
+}
+
+.login_form {
+	width: 40%;
+	height: 80%;
+	margin: 0 auto;
+	/*border:2px solid #16A085;*/
+	border-radius: 15px;
+	padding: 10px;
+	background: #ECF0F1;
+}
+
+.name, .pwd {
+	display: block;
+	width: 73%;
+	margin: 0 auto;
+	height: 35px;
+	font-size: 16px;
+	border-color: transparent;
+	border-radius: 5px;
+	border: 0;
+	padding-left: 0px;
+}
+
+
+.yzm {
+	height: 40px;
+	margin: 0 auto;
+	width: 62%;
+	line-height: 35px;
+	position: relative; 
+	margin-bottom: 0px;
+}
+
+.code {
+	width: 50%;
+	height: 35px;
+	border: 0;
+	border-color: transparent;
+	font-size: 16px;
+	border-radius: 5px;
+	padding-left: 8px;
+}
+
+.code_pic {
+	display: block;
+	width: 40%;
+	height: 35px;
+	background-color: #34495e;
+	color: #FFF;
+	position: absolute;
+	top: 0px;
+	left: 60%;
+	border-radius: 5px;
+	text-align: center;
+}
+
+.name {
+	margin-top: 20px;
+}
+
+.sbm_btn {
+	display: inline-table;
+	text-align: center;
+	background-color: #1abc9c;
+	color: #fff;
+	line-height: 35px;
+	width: 22%;
+	height: 36px;
+	border-radius: 8px;
+	border:0;
+	padding-left: 8px;
+}
+
+.re_pwd {
+	width: 25%;
+	margin: 10px auto 10px;
+}
+
+.re_pwd a {
+	text-decoration: none;
+	font-size: 14px;
+	color: #ccc;
+}
+
+.re_pwd a:hover {
+	cursor: pointer;
+	color: #16A085;
+}
+
+.errorTips {
+	width: 70%;
+	color: red;
+	font-size: 14px;
+	margin: 0 auto;
+	height: 20px;
+	line-height: 20px;
+}
+.title{
+	text-align: center;
+	font-size: 40px;
+}
+
+#demo {
+	overflow: hidden;
+	height: 200px;
+	width: 350px;
+	margin: 90px auto;
+	position: relative;
+}
+
+#demo1 {
+	height: auto;
+	text-align: left;
+	font-size: 18px;
+}
+
+#demo2 {
+	height: auto;
+	text-align: left;
+}
+
+#demo1 li {
+	list-style-type: none;
+	height: 40px;
+	text-align: left;
+	text-indent: 15px;
+}
+
+#demo2 li {
+	list-style-type: none;
+	height: 40px;
+	text-align: left;
+	text-indent: 15px;
+}
+#title {
+	color: #fff;
+	font-size: 35px;
+	margin: 0 auto;
+	height: 20px;
+}
