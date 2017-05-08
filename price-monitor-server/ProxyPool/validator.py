@@ -98,11 +98,12 @@ class Validator:
     def _get_self_ip(self):
         # 获取自身外网ip
         try:
-            r = requests.get(self.http_target, headers=self.headers, timeout=5)
-            if r.ok:
-                pattern = re.compile(r'IP:port</td>\n?\s*<td.*?>([\d.]*?)(?::\d*)</td>', re.I)
-                ip = pattern.search(r.content).group(1)
-                logger.info('Get self ip success: %s' % ip)
+            #r = requests.get(self.http_target, headers=self.headers, timeout=5)
+            #if r.ok:
+                #pattern = re.compile(r'IP:port</td>\n?\s*<td.*?>([\d.]*?)(?::\d*)</td>', re.I)
+                #ip = pattern.search(r.content).group(1)
+                #logger.info('Get self ip success: %s' % ip)
+                ip = '115.159.190.214'
                 return ip
         except Exception, e:
             logger.warn('Get self ip fail, %s' % e)

@@ -27,13 +27,17 @@ class ItemQuery(object):
             item_name_inner = crawl.get_name_jd(item_id_inner, proxy_inner)
             return item_name_inner
         elif mall_name_inner == 'tm':
-            crawl = Crawl()
-            item_name_inner = crawl.get_name_tm(item_id_inner, proxy_inner)
-            return item_name_inner
+            #crawl = Crawl()
+            #item_name_inner = crawl.get_name_tm(item_id_inner, proxy_inner)
+            #return item_name_inner
+            temp_item_name = '天猫商品暂不支持监控，过两天上线'
+            return temp_item_name
         elif mall_name_inner == 'tb':
-            crawl = Crawl()
-            item_name_inner = crawl.get_name_tb(item_id_inner, proxy_inner)
-            return item_name_inner
+            #crawl = Crawl()
+            #item_name_inner = crawl.get_name_tb(item_id_inner, proxy_inner)
+            #return item_name_inner
+            temp_item_name = '天猫商品暂不支持监控，过两天上线'
+            return temp_item_name
         else:
             return '该商品未设定商城名'
 
@@ -43,13 +47,17 @@ class ItemQuery(object):
             item_price_inner = crawl.get_price_jd(item_id_inner, proxy_inner)
             return item_price_inner
         elif mall_name_inner == 'tm':
-            crawl = Crawl()
-            item_price_inner = crawl.get_price_tm(item_id_inner, proxy_inner)
-            return item_price_inner
+            #crawl = Crawl()
+            #item_price_inner = crawl.get_price_tm(item_id_inner, proxy_inner)
+            #return item_price_inner
+            temp_item_price = '-1'
+            return temp_item_price
         elif mall_name_inner == 'tb':
-            crawl = Crawl()
-            item_price_inner = crawl.get_price_tb(item_id_inner, proxy_inner)
-            return item_price_inner
+            #crawl = Crawl()
+            #item_price_inner = crawl.get_price_tb(item_id_inner, proxy_inner)
+            #return item_price_inner
+            temp_item_price = '-1'
+            return temp_item_price
         else:
             return '-1'
 
@@ -158,6 +166,11 @@ class ItemQuery(object):
                         proxy = query.use_proxy()
                         localtime = time.asctime(time.localtime(time.time()))
                         print 'Proxy Failure, change name proxy.', localtime
+                        continue
+                    except IndexError:
+                        proxy = query.use_proxy()
+                        localtime = time.asctime(time.localtime(time.time()))
+                        print 'Proxy cannot get tb name, change price proxy.', localtime
                         continue
                 while (1):
                     try:

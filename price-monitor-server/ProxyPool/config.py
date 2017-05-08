@@ -28,10 +28,10 @@ CRAWLER_CONFIG = {
 }
 
 VALIDATE_CONFIG = {
-    'THREAD_NUM': 500,
+    'THREAD_NUM': 200,
     'TIMEOUT': 20,
     'PROXY_TYPE': [0, 1, 2, 3],
-    'HTTP_TARGET': 'http://proxy.mimvp.com/check.php',
+    'HTTP_TARGET': 'https://proxy.mimvp.com/check.php',  # 原作者没s
     'HTTPS_TARGET': 'https://proxy.mimvp.com/check.php'
     # 'TARGET1': 'http://7xr8ng.com1.z0.glb.clouddn.com/a.txt',
     # 'TARGET2': 'http://www.stilllistener.com/checkpoint1/test11/'

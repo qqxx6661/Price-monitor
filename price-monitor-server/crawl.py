@@ -62,8 +62,8 @@ class Crawl(object):
         r = requests.get(url, headers=self.headers, proxies=proxies, timeout=6)
         selector = etree.HTML(r.text)
         price = selector.xpath("//*[@class='tb-rmb-num']/text()")  # list
-        print price  # unicode, str
-        return price[3]
+        print price  # 888.00-999.00需要正则，待修改
+        return price[4]
 
     def get_name_tm(self, item_id_inner, proxy_inner):
         url = 'https://detail.tmall.com/item.htm?id=' + item_id_inner
