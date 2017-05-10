@@ -32,7 +32,8 @@ class SendEmail(object):
         return formataddr((Header(name, 'utf-8').encode(), addr))
 
     def send(self):
-        server = smtplib.SMTP(self.smtp_server, 25)
+        server = smtplib.SMTP(self.smtp_server, 465)  # 25是普通接口，465 SSL接口
+        server.starttls()  # SSL要求这句
         server.set_debuglevel(1)
         server.login(self.from_addr, self.password)
         server.sendmail(self.from_addr, [self.to_addr], self.msg.as_string())
