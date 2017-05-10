@@ -41,7 +41,7 @@ class Crawl(object):
             except IndexError as e:
                 print e, name
                 print 'Catch name error'
-                name = '本轮抓取该商品名称失败，请检查商品ID'
+                name = '本轮抓取该商品名称失败，请等待重试'
                 return name
         return name  # 遇到return无需break了！
 

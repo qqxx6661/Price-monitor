@@ -187,6 +187,11 @@ class ItemQuery(object):
                         localtime = time.asctime(time.localtime(time.time()))
                         print 'Proxy Failure, change name proxy.', localtime
                         continue
+                    except requests.exceptions.ContentDecodingError:
+                        proxy = query.use_proxy()
+                        localtime = time.asctime(time.localtime(time.time()))
+                        print 'Proxy Failure, change name proxy.', localtime
+                        continue
                     except IndexError:
                         proxy = query.use_proxy()
                         localtime = time.asctime(time.localtime(time.time()))
