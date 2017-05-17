@@ -112,8 +112,8 @@ class ItemQuery(object):
                 cursor.execute(sql)
                 user_email = cursor.fetchone()
                 user_email = str(user_email[0])  # linux可用，win会报下面的错误
-                item_url = 'https://item.jd.com/' + item_id_inner + '.html'
-                email_text = '您监控的商品：' + str(item_name_inner) + '，' + item_url + '，现在价格为：' + str(item_price_inner) + '，您设定的价格为：' + str(user_price[0]) + '  赶紧抢购吧！'
+                # item_url = 'https://item.jd.com/' + item_id_inner + '.html'  # 邮件网址，怀疑是垃圾邮件原因
+                email_text = '您监控的商品：' + str(item_name_inner) + '，' + '，现在价格为：' + str(item_price_inner) + '，您设定的价格为：' + str(user_price[0]) + '  赶紧抢购吧！'
                 email_text = email_text.encode('utf-8')
                 email_zhuti = '您监控的商品降价了！'
                 sendemail = SendEmail(email_text, 'admin', 'user', email_zhuti, user_email)
@@ -188,6 +188,11 @@ class ItemQuery(object):
                         print 'Proxy Failure, change name proxy.', localtime
                         continue
                     except requests.exceptions.ContentDecodingError:
+                        proxy = query.use_proxy()
+                        localtime = time.asctime(time.localtime(time.time()))
+                        print 'Proxy Failure, change name proxy.', localtime
+                        continue
+                    except requests.exceptions.ChunkedEncodingError:
                         proxy = query.use_proxy()
                         localtime = time.asctime(time.localtime(time.time()))
                         print 'Proxy Failure, change name proxy.', localtime
