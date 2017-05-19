@@ -17,7 +17,7 @@ price-monitor
 
 **3.python**自行安装，无特殊版本要求
 
-- requests
+- requests (2.13.0+)
 - mysql-connector-python（建议下载源码安装，pip容易报错）
 - bs4
 - lxml
