@@ -138,9 +138,9 @@ require_once '../../util/functions.php';
                                                 <th valign="top">商城名称:</th>
                                                 <td>
                                                     <select class="inp-form" name="mall_name">
-                                                        <option value="京东">京东</option>
-                                                        <option value="淘宝">淘宝</option>
-                                                        <option value="天猫">天猫</option>
+                                                        <option value="jd">京东</option>
+                                                        <option value="tb">淘宝</option>
+                                                        <option value="tm">天猫</option>
                                                     </select>
                                                 </td>
                                                 <td></td>

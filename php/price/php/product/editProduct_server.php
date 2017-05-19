@@ -28,5 +28,5 @@ if (mysql_errno()) {
 } else {
     session_start();
     $_SESSION['user_id'] = $user_id;
-    header("Location:../monitor/price.php");
+        header("Location:../monitor/price.php");
 }

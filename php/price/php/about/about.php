@@ -82,6 +82,16 @@ require_once '../../util/functions.php';
                         <!--[if lte IE 6]></td></tr></table></a><![endif]-->
                     </li>
                 </ul>
+				<div class="nav-divider">&nbsp;</div>
+                <ul class="select">
+                    <li><a href="../other/other.php"><b>友情链接</b><!--[if IE 7]><!--></a><!--<![endif]-->
+                        <!--[if lte IE 6]>
+                        <table>
+                            <tr>
+                                <td><![endif]-->
+                        <!--[if lte IE 6]></td></tr></table></a><![endif]-->
+                    </li>
+                </ul>
                 <div class="nav-divider">&nbsp;</div>
                 <div class="clear"></div>
             </div>
@@ -117,7 +127,12 @@ require_once '../../util/functions.php';
                         <!--  start table-content  -->
                         <div id="table-content">
                             <h3>系统介绍</h3>
-                            本系统基于php和python开发，目前为v0.1(beta)版本！目前只支持京东商城！
+							</br>
+							<hr>
+							</br>
+                            本系统基于php和python开发，目前为v1.1(beta)版本！只支持京东商城，后续还会支持更多电商平台！</br></br>
+
+							感谢您的使用，如有建议或者意见，请点击右侧联系作者进行反馈！
                         </div>
                         <!--  end table-content  -->
 

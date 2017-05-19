@@ -205,17 +205,4 @@ function getLangDate() {
 	setTimeout("getLangDate()", 1000);// 每隔1秒重新调用一次该函数
 }
 
-//找回用户名
-
-    // $('#forgetPwdButton').click(function() {
-    //     if ($('#find_name').val()==''){
-    //         alert('找回密码需输入你的用户名哦！');
-    //         return false;
-    //     }
-    //     if ($('#find_email').val()==''){
-    //         alert('找回密码需输入你的邮箱哦！');
-    //         return false;
-    //     }
-    //     document.getElementById("forgetPwdForm").submit();
-    // });
 

@@ -18,8 +18,6 @@ connectDB();
     <link rel="stylesheet" href="../../css/screen.css" type="text/css" media="screen" title="default"/>
 	<script type="text/javascript" src="../../js/jquery-1.4.4.js"></script>
 	<script type="text/javascript" src="../../js/pagePlay.js"></script>
-	<!-- <script type="text/javascript" src="../../js/go_to_top.js"></script> -->
-	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
     <title>价格监控</title>
 </head>
 <body>
@@ -139,8 +137,8 @@ connectDB();
 <div id="content-outer">
     <!-- start content -->
     <div id="content">
-        <h1 style="color: #1a1a1a; padding: 10px 0 20px 20px; font-size: 25px">价格监控（共<?php echo $data_count;?>件商品,正在监控：<?php echo $onMonitor_count;?>件,尚未监控：<?php echo $offMonitor_count;?>件）</h1>
-		<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（新添加商品的名称与商品价格会延迟显示，不影响监控！）</h3>
+        <h1 style="color: #1a1a1a; padding: 10px 0 20px 20px; font-size: 25px">友情链接</h1>
+		<h3>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;如有版权问题，请联系作者删除！</h3>
         <table border="0" width="100%" cellpadding="0" cellspacing="0" id="content-table">
             <tr>
                 <td></td>
@@ -166,72 +164,29 @@ connectDB();
                             <form id="mainform" action="">
                                 <table border="0" width="100%" cellpadding="0" cellspacing="0" id="product-table">
                                     <tr>
-                                        <th class="table-header-repeat line-left minwidth-1">商品ID</th>
-                                        <th class="table-header-repeat line-left minwidth-1">商品名称</th>
-                                        <th class="table-header-repeat line-left minwidth-1">商城名称</th>
-                                        <th class="table-header-repeat line-left minwidth-1">商品价格</th>
-                                        <th class="table-header-repeat line-left minwidth-1">预期价格</th>
-                                        <th class="table-header-repeat line-left minwidth-1">监控状态</th>
-                                        <th class="table-header-repeat line-left minwidth-1">备注</th>
-                                        <th class="table-header-repeat line-left minwidth-1">监控管理</th>
-                                        <th class="table-header-repeat line-left minwidth-1">监控开关</th>
+                                        <td><a href="">图</a></td>
+										<td><a href="">片</a></td>
+										<td><a href="">待</a></td>
+										<td><a href="">加</a></td>										
                                     </tr>
-                                    <?php
-									if($data_count==0){
-										echo"<tr><td colspan='9' style='text-align:center; color:red; font-size:20px;'>您还没有监控任何商品，快去添加吧！(^-^)</td></tr>";
-									}else{
-										for ($i = 0; $i < $data_count; $i++) {
-											$result_arr = mysql_fetch_assoc($result_all);
-											$id = $result_arr['id'];
-											$item_id = $result_arr['item_id'];
-											$item_name = $result_arr['item_name'];
-											$mall_name = $result_arr['mall_name'];
-											if ($mall_name=='jd'){
-											    $mall_name_ven='京东';
-                                            }elseif ($mall_name=='tb'){
-                                                $mall_name_ven='淘宝';
-                                            }elseif($mall_name=='tm'){
-                                                $mall_name_ven='天猫';
-                                            }else{
-                                                $mall_name_ven=$mall_name;
-                                            }
-											$item_price = $result_arr['item_price'];
-											$user_id = $result_arr['user_id'];
-											$status = $result_arr['status'];
-											$note = $result_arr['note'];
-											$status == 0?($statusCode =  '<span style="color: red">尚未监控</span>'):($statusCode = '<span style="color: green">正在监控</span>');
-											$user_price = $result_arr['user_price'];
-											echo "<tr><td>$item_id</td><td><a href='https://item.jd.com/$item_id.html'>$item_name</a></td><td>$mall_name_ven</td><td>$item_price</td><td>$user_price</td><td>$statusCode</td>
-												  <td>$note</td><td><a href='../product/editProduct.php?id=$id&&edit_auth=0'>修改</a>
-												  |<a href='../product/deleteProduct.php?id=$id&&delete_auth=0'>删除</a></td>
-												  <td><a href=\"../product/monitorSwitch.php?status=1&&id=$id\" class=\"icon-5 info-tooltip\"></a><a href=\"../product/monitorSwitch.php?status=0&&id=$id\" class=\"icon-2 info-tooltip\"></a></td></tr>";
-										}
-									}
-                                    ?>
+									<tr>
+                                        <td><a href="">谢</a></td>
+										<td><a href="">谢</a></td>
+										<td><a href="">合</a></td>
+										<td><a href="">作</a></td>										
+                                    </tr>
+									<tr>
+                                        <td><a href=""></a></td>
+										<td><a href=""></a></td>
+										<td><a href=""></a></td>
+										<td><a href=""></a></td>										
+                                    </tr>
                                 </table>
                                 <!--  end product-table................................... -->
                             </form>
 							
                         </div>
-						<!-- <table border="0" cellpadding="0" cellspacing="0" id="paging-table">
-								<tr>
-								<td>
-									<a  id="firstPage" class="page-far-left"></a></td>
-								<td>
-									<a  id="frontPage" class="page-left"></a></td>
-								<td>
-									<div id="curPage" style="cursor:pointer;padding:0 10px 0 10px;"></div></td>
-								<td>
-									<a  id="nextPage" class="page-right"></a></td>
-								<td>
-									<a  id="lastPage" class="page-far-right"></a>
-								</td>
-								<td>
-									<input type="text" id="inputPage" style="width:20px;"/>
-									<span id="changePage">跳转</span></div>
-								</td>
-								</tr>
-								</table>	 -->
+						
                         <!--  end content-table  -->
                 </td>
                 <td id="tbl-border-right"></td>
@@ -256,7 +211,6 @@ connectDB();
         <th class="sized bottomright"></th>
     </tr>
     </table>
-    <div class="clear">&nbsp;</div>
 
 </div>
 </div>
@@ -270,12 +224,6 @@ connectDB();
     </div>
     <!--  end footer-left -->
     <div class="clear">&nbsp;</div>
-	<!-- Return to Top -->
-<a href="javascript:" id="return-to-top"><i class="icon-chevron-up"></i></a>
-
-
-<!-- ICON NEEDS FONT AWESOME FOR CHEVRON UP ICON -->
-<link href="../../css/goToTop.css" rel="stylesheet">
 </div>
 </body>
 </html>

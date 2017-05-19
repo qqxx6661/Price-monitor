@@ -86,7 +86,7 @@ body	{
 #content-table-inner	{
 	font-size: 12px;
 	line-height: 12px;
-	padding: 10px 0 20px 0;
+	padding: 20px 0 20px 0;
 	border: 1px;
 	}
 #tbl-border-top	{
@@ -108,7 +108,7 @@ body	{
 #table-content	{
 	line-height: 16px;
 	margin: 0 10px 10px 10px;
-	min-height: 300px;
+	min-height: 430px;
 	}
 
 .topleft {
@@ -336,6 +336,7 @@ a:hover.icon-5	{
 	}
 #product-table	{
 	margin-bottom: 20px;
+	
 	}
 #product-table	td a	{
 	color: #393939;
@@ -351,6 +352,7 @@ a:hover.icon-5	{
 	min-width: 110px;
 	}
 #product-table td	{
+	height:50px;
 	border: 1px solid #d2d2d2;
 	padding: 10px 0 10px 10px;
 	}
@@ -519,7 +521,7 @@ ul.greyarrow li a:hover	{
 	width: 24px;
 	}
 .page-left	{
-	background: url(../images/table/paging_far_left.gif) no-repeat;
+	background: url(../images/table/paging_left.gif) no-repeat;
 	display: block;
 	float: left;
 	height: 24px;
@@ -534,7 +536,7 @@ ul.greyarrow li a:hover	{
 	width: 24px;
 	}
 .page-right	{
-	background: url(../images/table/paging_far_right.gif) no-repeat;
+	background: url(../images/table/paging_right.gif) no-repeat;
 	display: block;
 	float: left;
 	height: 24px;
@@ -933,8 +935,8 @@ Copyright (c) 2005-2007 Stu Nicholls. All rights reserved. This stylesheet and t
 	font-size: 13px;
 	height: 38px;
 	position: relative;
-	width: 700px;
-	min-width: 660px;
+	width: 800px;
+	min-width: 750px;
 	z-index: 500;
 	}
 .nav-divider	{
