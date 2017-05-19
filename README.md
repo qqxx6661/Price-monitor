@@ -21,6 +21,7 @@ price-monitor
 - mysql-connector-python（建议下载源码安装，pip容易报错）
 - bs4
 - lxml
+- gevent
 
 # 使用步骤
 
