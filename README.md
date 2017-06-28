@@ -3,7 +3,7 @@ price-monitor
 
 # 简介
 
-![image](demo.png)
+![image](Demo.png)
 
 **京东商城商品价格监控，用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
 
