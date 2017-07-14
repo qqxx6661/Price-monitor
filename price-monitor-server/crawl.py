@@ -99,10 +99,3 @@ class Crawl(object):
         price = price[0][:-2]  # '699.00' 888.00-999.00需要正则，待修改, 下架商品, 待修改
         # print name[0], price
         return price
-
-if __name__ == '__main__':
-    crawl = Crawl()
-    crawl.get_name_tb()
-    crawl.get_price_tb()
-    crawl.get_name_tm()
-    crawl.get_price_tm()

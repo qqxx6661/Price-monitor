@@ -5,7 +5,9 @@ from send_email import SendEmail
 import time
 import requests
 import json
-
+import sys   #引用sys模块进来，并不是进行sys的第一次加载
+reload(sys)  #重新加载sys
+sys.setdefaultencoding('utf8')  ##调用setdefaultencoding函数
 
 class ItemQuery(object):
     conn = mysql.connector.connect(user='root', password='root', database='pricemonitor')  # static variable
@@ -104,21 +106,22 @@ class ItemQuery(object):
             cursor.close()
             return
         if float(user_price[0]) >= float(item_price_inner):  # 转为float才可以对比，可以改进
-            try:
-                sql = 'update monitor set status = 0 where item_id = %s and user_id = %s' % (item_id_inner, user_id_inner)
-                cursor.execute(sql)
-                self.conn.commit()
-                sql = 'select user_email from user where user_id = %s' % user_id_inner
-                cursor.execute(sql)
-                user_email = cursor.fetchone()
-                user_email = str(user_email[0])  # linux可用，win会报下面的错误
-                # item_url = 'https://item.jd.com/' + item_id_inner + '.html'  # 邮件网址，怀疑是垃圾邮件原因
-                email_text = '您监控的商品：' + str(item_name_inner) + '，' + '，现在价格为：' + str(item_price_inner) + '，您设定的价格为：' + str(user_price[0]) + '  赶紧抢购吧！'
-                email_text = email_text.encode('utf-8')
-                email_zhuti = '您监控的商品降价了！'
-                sendemail = SendEmail(email_text, 'admin', 'user', email_zhuti, user_email)
-                sendemail.send()
-                print '该商品降价，已发送邮件提醒用户'
+            # try:
+            sql = 'update monitor set status = 0 where item_id = %s and user_id = %s' % (item_id_inner, user_id_inner)
+            cursor.execute(sql)
+            self.conn.commit()
+            sql = 'select user_email from user where user_id = %s' % user_id_inner
+            cursor.execute(sql)
+            user_email = cursor.fetchone()
+            user_email = str(user_email[0])  # linux可用，win会报下面的错误
+            # item_url = 'https://item.jd.com/' + item_id_inner + '.html'  # 邮件网址，怀疑是垃圾邮件原因
+            email_text = '您监控的商品：' + item_name_inner + '，' + '，现在价格为：' + item_price_inner + '，您设定的价格为：' + str(user_price[0]) + '  赶紧抢购吧！'.encode('utf-8')
+            email_text = email_text
+            email_zhuti = '您监控的商品降价了！'
+            sendemail = SendEmail(email_text, 'admin', 'user', email_zhuti, user_email)
+            sendemail.send()
+            print '该商品降价，已发送邮件提醒用户'
+            '''
             except UnicodeEncodeError as e:
                 sql = 'update monitor set status = 1 where item_id = %s and user_id = %s' % (item_id_inner, user_id_inner)
                 cursor.execute(sql)
@@ -129,6 +132,7 @@ class ItemQuery(object):
                 cursor.execute(sql)
                 self.conn.commit()
                 print '发送邮件过程中发生错误，等待下轮重试，正在监控状态继续', e
+            '''
         cursor.close()
 
     def use_proxy(self):
@@ -142,7 +146,7 @@ class ItemQuery(object):
                     'https': 'https://' + js[0],
                 }
             except IndexError:
-                print 'No useable proxy now, retrying'
+                print 'No usable proxy now, retrying'
                 time.sleep(5)
                 continue
             except requests.exceptions.ConnectionError:
@@ -165,7 +169,7 @@ class ItemQuery(object):
                 proxy = query.use_proxy()
             for item in items:
                 item_id = str(item[0])
-                # item_id = item_id[1:-2]  # 现在啊同时获取用户和商品ID后不需要这条了
+                # item_id = item_id[1:-2]  # 现在同时获取用户和商品ID后不需要这条了
                 user_id = str(item[1])
                 mall_name = str(item[2])
                 while (1):
