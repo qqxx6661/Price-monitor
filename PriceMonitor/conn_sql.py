@@ -9,15 +9,11 @@ import json
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
-from os import path
 import os
 
 
 class ItemQuery(object):
-    local_dir = path.dirname(__file__)
-    local_dir = os.path.dirname(local_dir)
-    local_dir = os.path.dirname(local_dir)
-    conn = sqlite3.connect(os.path.join(local_dir, 'app.db'))
+    conn = sqlite3.connect('jdmonitor.db')
     start_flag = 0  # 记录是否为首轮
 
     def read_itemid(self):
