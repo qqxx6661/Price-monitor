@@ -40,7 +40,8 @@ status = 1 (监控开关)
 mall_id = 1 (代表京东)
 user_id = 1 (网站用，这里请直接填写1)
 ```
-![image](Database demo.png)
+
+![image2](Database demo.png)
 
 1. 设置邮件提醒的发件邮箱
 
