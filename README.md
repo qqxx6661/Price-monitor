@@ -18,9 +18,9 @@ price-monitor
 
 承蒙厚爱，很多人star了该项目。最近比较忙，有很多想到的改进措施没有做，等空下来会慢慢补。
 
-[] 代理池造新轮子，检验代理对特定网站可用性，提高效率：<a href="https://github.com/qqxx6661/FreeProxyPool">FreeProxyPool</a>
+1. 代理池自己重新写，检验代理对特定网站可达性，提高效率：<a href="https://github.com/qqxx6661/FreeProxyPool">FreeProxyPool</a>
 
-[] 代码重构
+2. 代码重构
 
 # 项目依赖
 
