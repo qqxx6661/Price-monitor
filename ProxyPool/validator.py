@@ -36,7 +36,7 @@ class Validator:
         logger.info('Get %s avaliable proxies' % len(avaliable_proxies))
         return avaliable_proxies
 
-    def _v(self, proxy, target):
+    def _v(self, proxy, target):  # 暂时用访问京东做测试，并且不考虑其他
         try:
             start = time.time()
             proxies = {
@@ -46,33 +46,57 @@ class Validator:
             r = requests.get(target, headers=self.headers, proxies=proxies, timeout=self.timeout, verify=False)
             if r.ok:
                 speed = time.time() - start
-                headers = self.pattern.findall(r.content)
-                headers_info = {}
-                for header in headers:
-                    headers_info[header[0]] = header[1].split(':')[0]
-                REMOTE_ADDR = headers_info.get('IP:Port', '')
-                HTTP_VIA = headers_info.get('HTTP_CLIENT_IP', '')
-                HTTP_X_FORWARDED_FOR = headers_info.get('HTTP_X_FORWARDED_FOR', '')
-                if REMOTE_ADDR and REMOTE_ADDR != self.ip:
-                    if not HTTP_X_FORWARDED_FOR:
-                        if not HTTP_VIA:
-                            type = 3
-                    elif HTTP_X_FORWARDED_FOR != self.ip:
-                        type = 2
-                    else:
-                        type = 1
-                    logger.info('Validating %s, success, type:%s, time:%ss', proxy, type, speed)
-                    return {
-                        'ip': proxy.split(':')[0],
-                        'port': proxy.split(':')[1],
-                        'type': type,
-                        'speed': speed,
-                        'area': self.IPL.find(proxy.split(':')[0]).rstrip().replace('\t', '.')
-                    }
+                type = 3  # 暂时默认为3高匿名
+                logger.info('Validating %s, success, type:%s, time:%ss', proxy, type, speed)
+                return {
+                    'ip': proxy.split(':')[0],
+                    'port': proxy.split(':')[1],
+                    'type': type,
+                    'speed': speed,
+                    'area': self.IPL.find(proxy.split(':')[0]).rstrip().replace('\t', '.')
+                }
         except Exception as e:
             logger.debug('Validating %s, fail: %s', proxy, e)
             pass
         return None
+
+    # def _v(self, proxy, target):
+    #     try:
+    #         start = time.time()
+    #         proxies = {
+    #             'http': 'http://%s' % proxy,
+    #             'https': 'http://%s' % proxy
+    #         }
+    #         r = requests.get(target, headers=self.headers, proxies=proxies, timeout=self.timeout, verify=False)
+    #         if r.ok:
+    #             speed = time.time() - start
+    #             headers = self.pattern.findall(r.content)
+    #             headers_info = {}
+    #             for header in headers:
+    #                 headers_info[header[0]] = header[1].split(':')[0]
+    #             REMOTE_ADDR = headers_info.get('IP:Port', '')
+    #             HTTP_VIA = headers_info.get('HTTP_CLIENT_IP', '')
+    #             HTTP_X_FORWARDED_FOR = headers_info.get('HTTP_X_FORWARDED_FOR', '')
+    #             if REMOTE_ADDR and REMOTE_ADDR != self.ip:
+    #                 if not HTTP_X_FORWARDED_FOR:
+    #                     if not HTTP_VIA:
+    #                         type = 3
+    #                 elif HTTP_X_FORWARDED_FOR != self.ip:
+    #                     type = 2
+    #                 else:
+    #                     type = 1
+    #                 logger.info('Validating %s, success, type:%s, time:%ss', proxy, type, speed)
+    #                 return {
+    #                     'ip': proxy.split(':')[0],
+    #                     'port': proxy.split(':')[1],
+    #                     'type': type,
+    #                     'speed': speed,
+    #                     'area': self.IPL.find(proxy.split(':')[0]).rstrip().replace('\t', '.')
+    #                 }
+    #     except Exception as e:
+    #         logger.debug('Validating %s, fail: %s', proxy, e)
+    #         pass
+    #     return None
 
     def validate(self, (proxy, protocol)):
         proxy_info = None
