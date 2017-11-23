@@ -2,25 +2,25 @@
 # coding:utf-8
 
 
-def get_proxy_sites():
+def get_proxy_sites():  # 由于现在验证代理网页失效，暂时注释掉不可用的，只爬高匿名代理，
     proxysites = [
-        {
-            'url': 'http://www.66ip.cn/%s.html',
-            'range': ['index'] + range(2, 11),
-            'pattern': '(?P<ip>(?:\d{1,3}\.){3}\d{1,3})</td>\n?\s*<td.*?>\s*(?P<port>\d{1,4})'
-        },
-        {
-            'url': 'http://www.66ip.cn/%s',
-            'range': ['mo.php?tqsl=1000']
-                     +
-                     ['nmtq.php?getnum=1000&anonymoustype=%s&proxytype=2&api=66ip' % n for n in range(1, 5)],
-            'pattern': '(?P<ip>(?:\d{1,3}\.){1,3}\d{1,3}):(?P<port>\d{1,4})'
-        },
-        {
-            'url': 'http://www.66ip.cn/mo.php?sxb=&tqsl=3000&port=&export=&ktip=&sxa=&textarea=',
-            'range': [],
-            'pattern': '(?P<ip>(?:\d{1,3}\.){1,3}\d{1,3}):(?P<port>\d{1,4})'
-        },
+        # {
+        #     'url': 'http://www.66ip.cn/%s.html',
+        #     'range': ['index'] + range(2, 11),
+        #     'pattern': '(?P<ip>(?:\d{1,3}\.){3}\d{1,3})</td>\n?\s*<td.*?>\s*(?P<port>\d{1,4})'
+        # },
+        # {
+        #     'url': 'http://www.66ip.cn/%s',
+        #     'range': ['mo.php?tqsl=1000']
+        #              +
+        #              ['nmtq.php?getnum=1000&anonymoustype=%s&proxytype=2&api=66ip' % n for n in range(1, 5)],
+        #     'pattern': '(?P<ip>(?:\d{1,3}\.){1,3}\d{1,3}):(?P<port>\d{1,4})'
+        # },
+        # {
+        #     'url': 'http://www.66ip.cn/mo.php?sxb=&tqsl=3000&port=&export=&ktip=&sxa=&textarea=',
+        #     'range': [],
+        #     'pattern': '(?P<ip>(?:\d{1,3}\.){1,3}\d{1,3}):(?P<port>\d{1,4})'
+        # },
         # {
         #     'url': 'http://www.kuaidaili.com/proxylist/%s',
         #     'range': range(1, 11),
@@ -33,39 +33,41 @@ def get_proxy_sites():
         # },
         {
             'url': 'http://www.xicidaili.com/%s',
-            'range': ['%s/%s' % (m, n) for m in ['nn', 'nt', 'wn', 'wt'] for n in range(1, 6)],
+            # 'range': ['%s/%s' % (m, n) for m in ['nn', 'nt', 'wn', 'wt'] for n in range(1, 6)],
+            'range': ['%s/%s' % (m, n) for m in ['nn'] for n in range(1, 6)],
             'pattern': '(?P<ip>(?:\d{1,3}\.){3}\d{1,3})</td>\n?\s*<td.*?>\s*(?P<port>\d{1,4})'
         },
-        {
-            'url': 'http://www.cz88.net/proxy/%s',
-            'range': ['index.shtml'] + ['http_%s.shtml' % n for n in range(2, 11)],
-            'pattern': '(?P<ip>(?:\d{1,3}\.){3}\d{1,3})</div>\n?\s*<div.*?>\s*(?P<port>\d{1,4})'
-        },
-        {
-            'url': 'http://www.ip181.com/daili/%s.html',
-            'range': range(1, 11),
-            'pattern': '(?P<ip>(?:\d{1,3}\.){3}\d{1,3})</td>\n?\s*<td.*?>\s*(?P<port>\d{1,4})'
-
-        },
-        {
-            'url': 'http://proxy.ipcn.org/proxylist%s.html',
-            'range': ['', '2'],
-            'pattern': '(?P<ip>(?:\d{1,3}\.){1,3}\d{1,3}):(?P<port>\d{1,4})'
-        },
-        {
-            'url': 'http://ip84.com/%s',
-            'range': ['dl'] + ['dl/%s' % n for n in range(1, 15)]
-                     +
-                     ['gw'] + ['gw/%s' % n for n in range(1, 40)],
-            'pattern': '(?P<ip>(?:\d{1,3}\.){3}\d{1,3})</td>\n?\s*<td.*?>\s*(?P<port>\d{1,4})'
-        },
+        # {
+        #     'url': 'http://www.cz88.net/proxy/%s',
+        #     'range': ['index.shtml'] + ['http_%s.shtml' % n for n in range(2, 11)],
+        #     'pattern': '(?P<ip>(?:\d{1,3}\.){3}\d{1,3})</div>\n?\s*<div.*?>\s*(?P<port>\d{1,4})'
+        # },
+        # {
+        #     'url': 'http://www.ip181.com/daili/%s.html',
+        #     'range': range(1, 11),
+        #     'pattern': '(?P<ip>(?:\d{1,3}\.){3}\d{1,3})</td>\n?\s*<td.*?>\s*(?P<port>\d{1,4})'
+        #
+        # },
+        # {
+        #     'url': 'http://proxy.ipcn.org/proxylist%s.html',
+        #     'range': ['', '2'],
+        #     'pattern': '(?P<ip>(?:\d{1,3}\.){1,3}\d{1,3}):(?P<port>\d{1,4})'
+        # },
+        # {
+        #     'url': 'http://ip84.com/%s',
+        #     'range': ['dl'] + ['dl/%s' % n for n in range(1, 15)]
+        #              +
+        #              ['gw'] + ['gw/%s' % n for n in range(1, 40)],
+        #     'pattern': '(?P<ip>(?:\d{1,3}\.){3}\d{1,3})</td>\n?\s*<td.*?>\s*(?P<port>\d{1,4})'
+        # },
         {
             'url': 'http://www.mimiip.com/%s',
-            'range': ['%s/%s' % (m, n) for m in ['gngao', 'gnpu', 'gntou', 'hw'] for n in range(1, 5)],
+            # 'range': ['%s/%s' % (m, n) for m in ['gngao', 'gnpu', 'gntou', 'hw'] for n in range(1, 5)],
+            'range': ['%s/%s' % (m, n) for m in ['gngao'] for n in range(1, 5)],
             'pattern': '(?P<ip>(?:\d{1,3}\.){3}\d{1,3})</td>\n?\s*<td.*?>\s*(?P<port>\d{1,4})'
         },
     ]
-    proxysites.extend(get_proxy_sites2())
+    # proxysites.extend(get_proxy_sites2())  # 博客内的也都是高匿名和透明混合，暂时不用
     return proxysites
 
 

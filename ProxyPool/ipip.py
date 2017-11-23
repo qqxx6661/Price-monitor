@@ -6,7 +6,7 @@ import struct
 from socket import inet_aton
 import os
 
-
+# 查找17monipdb.dat确定ip地址位置
 class IPL:
     def __init__(self, file):
         self.offset = 0

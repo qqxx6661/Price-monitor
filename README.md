@@ -1,6 +1,8 @@
 price-monitor
 ==========
 
+**PS：（2017.11）目前，免网上可用的免费代理可用性不佳，影响了监控以及邮件提醒的效率，请见谅**
+
 # 简介
 
 **该项目为电商价格监控-爬虫代码，可独立使用**
@@ -18,9 +20,9 @@ price-monitor
 
 承蒙厚爱，很多人star了该项目。最近比较忙，有很多想到的改进措施没有做，等空下来会慢慢补。
 
-1. 代理池自己重新写，检验代理对特定网站可达性，提高效率：<a href="https://github.com/qqxx6661/FreeProxyPool">FreeProxyPool</a>
+1. 代理池重构，检验代理对特定网站可达性，提高效率：<a href="https://github.com/qqxx6661/FreeProxyPool">FreeProxyPool</a>
 
-2. 代码重构
+2. 监控重构：协程
 
 # 项目依赖
 

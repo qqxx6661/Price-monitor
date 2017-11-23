@@ -10,6 +10,7 @@ import ipip
 import requests
 from ua import RandomHeader
 from config import VALIDATE_CONFIG
+from lxml import etree
 
 requests.packages.urllib3.disable_warnings()
 rh = RandomHeader()
@@ -36,7 +37,7 @@ class Validator:
         logger.info('Get %s avaliable proxies' % len(avaliable_proxies))
         return avaliable_proxies
 
-    def _v(self, proxy, target):  # 暂时用访问京东做测试，并且不考虑其他
+    def _v(self, proxy, target):  # 暂时用访问京东做测试，这里只有type是需要链接网页获取的
         try:
             start = time.time()
             proxies = {
@@ -44,9 +45,14 @@ class Validator:
                 'https': 'http://%s' % proxy
             }
             r = requests.get(target, headers=self.headers, proxies=proxies, timeout=self.timeout, verify=False)
-            if r.ok:
+            # selector = etree.HTML(r.text)
+            # xpath_about_me = '//*[@href="//about.jd.com"]/text()'
+            # about_me_ok = selector.xpath(xpath_about_me)  # list
+            # print len(about_me_ok), about_me_ok, r.status_code
+            if r.status_code == 200:
+                # if len(about_me_ok) == 1:  # 证明到了JD首页
                 speed = time.time() - start
-                type = 3  # 暂时默认为3高匿名
+                type = 3  # 只抓取高匿名所以默认为3
                 logger.info('Validating %s, success, type:%s, time:%ss', proxy, type, speed)
                 return {
                     'ip': proxy.split(':')[0],
@@ -70,7 +76,7 @@ class Validator:
     #         r = requests.get(target, headers=self.headers, proxies=proxies, timeout=self.timeout, verify=False)
     #         if r.ok:
     #             speed = time.time() - start
-    #             headers = self.pattern.findall(r.content)
+    #             headers = self.pattern.findall(r.content)  # 使用初始化的RE语句
     #             headers_info = {}
     #             for header in headers:
     #                 headers_info[header[0]] = header[1].split(':')[0]
@@ -127,7 +133,7 @@ class Validator:
                 #pattern = re.compile(r'IP:port</td>\n?\s*<td.*?>([\d.]*?)(?::\d*)</td>', re.I)
                 #ip = pattern.search(r.content).group(1)
                 #logger.info('Get self ip success: %s' % ip)
-                ip = '115.159.190.214'
+                ip = '115.159.190.214'  # 没用到啊
                 return ip
         except Exception, e:
             logger.warn('Get self ip fail, %s' % e)
