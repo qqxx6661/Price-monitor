@@ -1,71 +1,64 @@
-price-monitor
+Price-Monitor:电商价格监控
+
+Python3+requests+sqlite+代理池
 ==========
 
-**PS：（2017.11）目前，免网上可用的免费代理可用性不佳，影响了监控以及邮件提醒的效率，请见谅**
+**全新版本来袭：代码完全重构，采用协程，redis代理池，大大提高监控效率**
 
 # 简介
 
-**该项目为电商价格监控-爬虫代码，可独立使用**
-
 **功能：京东商城商品价格监控，用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
-
-**基于Flask的完整监控系统项目地址：<a href="https://github.com/qqxx6661/flask_yzd">点我</a>**
-
-**目前已经开放（新版）测试：访问<a href="http://www.usau-buy.me/">电商价格监控系统</a>便可体验。**
-
-![image](Demo.png)
-
-**申明：该项目只限于爬取网上公开可见的商品信息。**
-# TODO
-
-承蒙厚爱，很多人star了该项目。最近比较忙，有很多想到的改进措施没有做，等空下来会慢慢补。
-
-1. 代理池重构，检验代理对特定网站可达性，提高效率：<a href="https://github.com/qqxx6661/FreeProxyPool">FreeProxyPool</a>
-
-2. 监控重构：协程
-
-# 项目依赖
-
-1. python2.7
-- requests
-- gevent(代理池依赖)
-- lxml
-- beautifulsoup4
-
-2. sqlite
-
-# 使用步骤
 
 **该代码从<a href="https://github.com/qqxx6661/flask_yzd">完整监控系统</a>独立而来，由于其代码量很少，适合给刚接触python爬虫和requests的同学参考。**
 
-0. 项目提供了数据库文件jdmonitor.db，里面有一些测试的商品条目，也可以自行添加。
-可以使用<a href="http://sqlitebrowser.org/"> sqlitedatabasebrowser</a>
-打开数据库添加条目。
-例如：
+**目前已经开放测试：访问<a href="http://www.usau-buy.me/">电商价格监控</a>便可体验。**
+
+![image](Demo.png)
+
+**申明：该项目只限于爬取网上公开可见的商品信息，请勿用于任何商业使用。**
+
+# TODO List
+
+## 持续更新中
+
+- [x] 代理池重构，单独检验代理对电商网站可达性
+- [x] 爬虫采用协程gevent库，提高采集效率
+- [ ] 支持更多的代理接口使用，包括：免费代理，付费代理，vps拨号代理
+- [ ] 代码覆盖率测试
+- [ ] 支持亚马逊中国，天猫等商城
+
+
+# 项目依赖
+
+## python3.5+
+
+主要包含以下库：
+
+- requests
+- gevent
+- lxml
+
+可以使用项目自带的requirements.txt安装环境
+
 ```
-item_id = 1131242 (商品ID)
-user_price = 100 (期望价格)
-status = 1 (监控开关)
-mall_id = 1 (代表京东)
-user_id = 1 (网站用，这里请直接填写1)
+pip install -r requirements.txt
 ```
 
-![image](Database demo.png)
+## sqlite
+
+# 使用步骤
+
+0. 运行脚本，新建Sqlite数据库
+
+```
+    python PriceMonitor/create_db.py
+```
+
+可以使用<a href="http://sqlitebrowser.org/"> sqlitedatabasebrowser</a>查看数据库。
 
 1. 设置邮件提醒的发件邮箱
 
-在PriceMonitor文件夹下有mailbox.txt，请自行设置邮箱，大部分邮箱都支持，比如QQ，gamil，校园邮箱，网易等
-
-- 第一行为发送邮箱地址
-- 第二行为发送邮箱密码
-- 第三行为邮箱的stmp
-
-
-```
-        xxxxxxxxx@xxx.edu.cn  
-        xxxxxxxx
-        stmp.xxx.edu.cn
-```
+教程请查看：<a href="https://github.com/qqxx6661/Price-monitor/blob/master/docs/SetupEmail.md">设置发件邮箱</a>
 
 2. 开启Proxypool代理池，开始爬取代理ip
 

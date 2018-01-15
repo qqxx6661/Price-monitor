@@ -1,277 +1,95 @@
-#!/usr/bin/env python
-#encoding: utf-8
-import sqlite3
-from crawl import Crawl
-from send_email import SendEmail
-import time
-import requests
-import json
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
-import os
+#!/usr/bin/env python3
+# coding=utf-8
+import logging
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from PriceMonitor.create_db import Base, User, Monitor
+import datetime
 
 
-class ItemQuery(object):
-    conn = sqlite3.connect('jdmonitor.db')
-    start_flag = 0  # 记录是否为首轮
+class Sql(object):
 
-    def read_itemid(self):
-        cursor = self.conn.cursor()
-        cursor.execute('select item_id, user_id, mall_id from monitor where status=1')
-        items_inner = cursor.fetchall()
-        localtime = time.asctime(time.localtime(time.time()))
-        print 'Local Time:', localtime
-        print 'All item:', items_inner
-        print '----------------------'
-        cursor.close()
-        return items_inner
+    engine = create_engine('sqlite:///db_demo.db', echo=True)
+    Base.metadata.bind = engine
+    DBSession = sessionmaker(bind=engine)
+    session = DBSession()
 
-    def read_itemid_temp(self):
-        cursor = self.conn.cursor()
-        cursor.execute('select item_id, user_id, mall_name from monitor where item_price is null and status = 1')
-        items_inner = cursor.fetchall()
-        localtime = time.asctime(time.localtime(time.time()))
-        print 'Local Time:', localtime
-        print 'All item:', items_inner
-        print '----------------------'
-        cursor.close()
-        return items_inner
+    def read_all_item(self):
+        all_item = self.session.query(Monitor).all()
+        return all_item
 
-    def crawl_name(self, item_id_inner, proxy_inner, mall_id_inner):
-        if mall_id_inner == '1':  # jd
-            crawl = Crawl()
-            item_name_inner = crawl.get_name_jd(item_id_inner, proxy_inner)
-            return item_name_inner
-        elif mall_id_inner == '2':  # tm
-            #crawl = Crawl()
-            #item_name_inner = crawl.get_name_tm(item_id_inner, proxy_inner)
-            #return item_name_inner
-            temp_item_name = '天猫价格抓取正在攻克中，名称暂不显示'
-            return temp_item_name
-        elif mall_id_inner == '3':  # tb
-            #crawl = Crawl()
-            #item_name_inner = crawl.get_name_tb(item_id_inner, proxy_inner)
-            #return item_name_inner
-            temp_item_name = '淘宝价格抓取正在攻克中，名称暂不显示'
-            return temp_item_name
-        else:
-            return '该商品未设定商城名'
+    def read_all_not_updated_item(self, update_time):
+        time_now = datetime.datetime.now()
+        need_item = []
+        all_items = self.session.query(Monitor).all()
+        for item in all_items:
+            if item.status:
+                time_delta = (time_now - item.update_time).days * 86400 + (time_now - item.update_time).seconds
+                logging.info('%s\'s time delta: %s', item.item_id, time_delta)
+                if time_delta >= update_time:
+                    need_item.append((item.column_id, item.item_id))
+        return need_item
 
-    def crawl_price(self, item_id_inner, proxy_inner, mall_id_inner):
-        if mall_id_inner == '1':
-            crawl = Crawl()
-            item_price_inner = crawl.get_price_jd(item_id_inner, proxy_inner)
-            return item_price_inner
-        elif mall_id_inner == '2':
-            #crawl = Crawl()
-            #item_price_inner = crawl.get_price_tm(item_id_inner, proxy_inner)
-            #return item_price_inner
-            temp_item_price = '-1'
-            return temp_item_price
-        elif mall_id_inner == '3':
-            #crawl = Crawl()
-            #item_price_inner = crawl.get_price_tb(item_id_inner, proxy_inner)
-            #return item_price_inner
-            temp_item_price = '-1'
-            return temp_item_price
-        else:
-            return '-1'
+    def check_item_need_to_remind(self):
+        need_item = []
+        items = self.session.query(Monitor).filter_by(status=1)
+        for item in items:
+            if float(item.user_price) > float(item.item_price):
+                user = self.session.query(User).filter_by(column_id=item.user_id)
+                need_item.append([user[0].email, item.item_name, item.item_price,
+                                  item.user_price, item.item_id, item.column_id])
+        return need_item
 
-    def write_item_info(self, user_id_inner, item_id_inner, item_name_inner, item_price_inner):
-        cursor = self.conn.cursor()
-        sql = 'update monitor set item_name = \'%s\', item_price = %s where item_id = %s and user_id = %s' % (item_name_inner, item_price_inner, item_id_inner, user_id_inner)
-        print 'SQL update:', sql.encode('utf-8')  # ascii错误解决，不加的话控制台中文乱码, 记得添加回去
-        cursor.execute(sql)
-        self.conn.commit()
-        cursor.close()
+    def write_item(self, item_id, user_price, user_id, mall_id=1, status=1):
+        time_now = datetime.datetime.now()
+        new_item = Monitor(item_id=item_id, user_price=user_price, user_id=user_id,
+                           mall_id=mall_id, status=status, add_time=time_now, update_time=time_now)
+        self.session.add(new_item)
+        self.session.commit()
 
-    def compare_send_email(self, user_id_inner, item_id_inner, item_price_inner, item_name_inner):
-        cursor = self.conn.cursor()
-        try:
-            sql = 'select user_price from monitor where item_id = %s and user_id = %s' % (item_id_inner, user_id_inner)
-            # print 'SQL query: ', sql
-            cursor.execute(sql)
-            user_price = cursor.fetchone()  # user_price: tuple, user_price[0]: decimal, item_price: unicode
-        except sqlite3.connector.errors.InternalError:  # 这句暂时不知道怎么写
-            note = '拥有重复商品，每个商品只能有一个监控，否则会导致监控失败。'
-            sql = 'update monitor set note = \'%s\' where item_id = %s and user_id = %s' % (note, item_id_inner, user_id_inner)
-            print 'Have same item id in one user, skip this round.'
-            cursor.execute(sql)
-            self.conn.commit()
-            cursor.close()
-            return
-        if float(item_price_inner) == -1.00:  # 抓取到-1不发邮件，状态依然为1
-            note = '商品已经下架或者ID不正确。'
-            sql = 'update monitor set note = \'%s\' where item_id = %s and user_id = %s' % (note, item_id_inner, user_id_inner)
-            print 'Wrong item price: -1, skip this round.'
-            cursor.execute(sql)
-            self.conn.commit()
-            cursor.close()
-            return
-        if float(user_price[0]) >= float(item_price_inner):  # 转为float才可以对比，可以改进
-            try:
-                sql = 'update monitor set status = 0 where item_id = %s and user_id = %s' % (item_id_inner, user_id_inner)
-                cursor.execute(sql)
-                self.conn.commit()
-                sql = 'select email from user where id = %s' % user_id_inner
-                cursor.execute(sql)
-                user_email = cursor.fetchone()
-                user_email = str(user_email[0])  # linux可用，winFlask版本可用
-                # item_url = 'https://item.jd.com/' + item_id_inner + '.html'  # 邮件网址，怀疑是垃圾邮件原因
-                email_text = '您监控的商品：' + item_name_inner + '，' + '，现在价格为：' + item_price_inner + '，您设定的价格为：' + str(user_price[0]) + '  赶紧抢购吧！'.encode('utf-8')
-                email_text = email_text
-                email_zhuti = '您监控的商品降价了！'
-                sendemail = SendEmail(email_text, 'admin', 'user', email_zhuti, user_email)
-                sendemail.send()
-                print '该商品降价，已发送邮件提醒用户'
-                note = '已发送提醒邮件'
-                sql = 'update monitor set note = \'%s\' where item_id = %s and user_id = %s' % (
-                note, item_id_inner, user_id_inner)
-                cursor.execute(sql)
-                self.conn.commit()
-            except UnicodeEncodeError as e:
-                sql = 'update monitor set status = 1 where item_id = %s and user_id = %s' % (
-                item_id_inner, user_id_inner)
-                cursor.execute(sql)
-                self.conn.commit()
-                note = '发送邮件错误：加密错误'
-                sql = 'update monitor set note = \'%s\' where item_id = %s and user_id = %s' % (
-                note, item_id_inner, user_id_inner)
-                cursor.execute(sql)
-                self.conn.commit()
-                print '发送邮件过程中发生加密错误，等待下轮重试，正在监控状态继续', e
-            except UnicodeDecodeError as e:
-                sql = 'update monitor set status = 1 where item_id = %s and user_id = %s' % (item_id_inner, user_id_inner)
-                cursor.execute(sql)
-                self.conn.commit()
-                note = '发送邮件错误：解密错误'
-                sql = 'update monitor set note = \'%s\' where item_id = %s and user_id = %s' % (
-                note, item_id_inner, user_id_inner)
-                cursor.execute(sql)
-                self.conn.commit()
-                print '发送邮件过程中发生解密错误，等待下轮重试，正在监控状态继续', e
-        cursor.close()
+    def write_user(self, user_name, email_address):
+        new_user = User(user_name=user_name, email=email_address)
+        self.session.add(new_user)
+        self.session.commit()
 
-    def use_proxy(self):
-        while(1):
-            url = 'http://localhost:8000/&type=3'
-            try:
-                r = requests.get(url, timeout=5)
-                js = json.loads(r.text)
-                proxies_inner = {
-                    'http': 'http://' + js[0],
-                    'https': 'https://' + js[0],
-                }
-            except IndexError:
-                print 'No usable proxy now, retrying'
-                time.sleep(5)
-                continue
-            except requests.exceptions.ConnectionError:
-                print 'No proxy now, retrying'
-                time.sleep(5)
-                continue
-            except requests.exceptions.ReadTimeout:
-                print 'No proxy now, retrying'
-                time.sleep(5)
-                continue
-            return proxies_inner
+    def update_item_name(self, column_id, item_name):
+        update_item = self.session.query(Monitor).get(column_id)  # get maybe get by id
+        update_item.item_name = item_name
+        self.session.commit()
 
-    def start_monitor(self, break_time):
-        while (1):
-            start = time.time()
-            query = ItemQuery()
-            items = query.read_itemid()
-            if self.start_flag == 0:  # 非第一轮则继续使用上一轮代理
-                print 'No previous round usable proxy'
-                proxy = query.use_proxy()
-            for item in items:
-                item_id = str(item[0])
-                # item_id = item_id[1:-2]  # 现在同时获取用户和商品ID后不需要这条了
-                user_id = str(item[1])
-                mall_id = str(item[2])
-                while (1):
-                    try:
-                        item_name = query.crawl_name(item_id, proxy, mall_id)
-                        break
-                    except requests.exceptions.ReadTimeout:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Read Timeout, change name proxy.', localtime
-                        continue
-                    except requests.exceptions.ProxyError:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy Timeout, change name proxy.', localtime
-                        continue
-                    except requests.exceptions.ConnectionError:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy Failure, change name proxy.', localtime
-                        continue
-                    except requests.exceptions.ContentDecodingError:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy Failure, change name proxy.', localtime
-                        continue
-                    except requests.exceptions.ChunkedEncodingError:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy Failure, change name proxy.', localtime
-                        continue
-                    except IndexError:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy cannot get tb name, change name proxy.', localtime
-                        continue
-                while (1):
-                    try:
-                        item_price = query.crawl_price(item_id, proxy, mall_id)
-                        break
-                    except requests.exceptions.ReadTimeout:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Read Timeout, change price proxy.', localtime
-                        continue
-                    except requests.exceptions.ProxyError:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy Timeout, change price proxy.', localtime
-                        continue
-                    except requests.exceptions.ConnectionError:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy Failure, change price proxy.', localtime
-                        continue
-                    except ValueError:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy cannot get jd price, change price proxy.', localtime
-                        continue
-                    except IndexError:
-                        proxy = query.use_proxy()
-                        localtime = time.asctime(time.localtime(time.time()))
-                        print 'Proxy cannot get tb price, change price proxy.', localtime
-                        continue
-                query.write_item_info(user_id, item_id, item_name, item_price)
-                query.compare_send_email(user_id, item_id, item_price, item_name)
-                print '------------------------------------------------------------'
-            # self.conn.close()  # 由于conn为静态变量，此处不能关闭
-            end = time.time()
-            self.start_flag = 1
-            print 'Total time (sec)', end - start, 'Take a break for (sec):', break_time
-            time.sleep(break_time)
+    def update_item_price(self, column_id, item_price):
+        time_now = datetime.datetime.now()
+        update_item = self.session.query(Monitor).get(column_id)  # get maybe get by id
+        update_item.item_price = item_price
+        update_item.update_time = time_now
+        self.session.commit()
+
+    def update_status(self, column_id):
+        update_item = self.session.query(Monitor).get(column_id)
+        update_item.status = 0
+        self.session.commit()
+
 
 if __name__ == '__main__':
-    itemquery = ItemQuery()
-    itemquery.start_monitor(5)
-    '''
-    local_dir = path.dirname(__file__)
-    local_dir = os.path.dirname(local_dir)
-    local_dir = os.path.dirname(local_dir)
-    conn = sqlite3.connect(os.path.join(local_dir, 'app.db'))
-    cursor = conn.cursor()
-    cursor.execute('select item_id, user_id, mall_id from monitor where status=1')
-    items_inner = cursor.fetchall()
-    print items_inner
-    '''
+    logging.basicConfig(level=logging.DEBUG)
+    sql = Sql()
+
+    # add user named 'test'
+    # sql.write_user('test', '404013419@qq.com')
+
+    # add test item
+    # sql.write_item(2777811, '10', 1)
+
+    # read all items in Monitor
+    # items = sql.read_all_item()
+    # for item in items:
+    #     print(item.item_id)
+
+    # read all items needed update
+    # print(sql.read_all_not_updated_item(600))
+
+    # update all items needed update
+    # sql.update_item_name(1, '123456')
+
+    # check all items needed to send email
+    sql.check_item_need_to_remind()
