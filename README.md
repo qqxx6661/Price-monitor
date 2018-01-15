@@ -13,7 +13,7 @@ Python3+requests+sqlite+代理池
 
 **目前已经开放测试：访问<a href="http://www.usau-buy.me/">电商价格监控</a>便可体验。**
 
-![image](Demo.png)
+![image](Pagedemo.png)
 
 **申明：该项目只限于爬取网上公开可见的商品信息，请勿用于任何商业使用。**
 
