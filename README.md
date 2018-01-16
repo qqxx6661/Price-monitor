@@ -3,7 +3,7 @@
 
 **Python3+requests+sqlite+代理池**
 
-[![Hex.pm](https://img.shields.io/hexpm/l/plug.svg)]()[![GitHub last commit](https://img.shields.io/github/last-commit/google/skia.svg)]()
+[![License](https://img.shields.io/hexpm/l/plug.svg)]()[![Powered by](https://img.shields.io/badge/Powered%20by-requests-green.svg]()
 
 **全新Python3版本：代码重构，采用协程，redis代理池，提高监控效率**
 
@@ -14,8 +14,6 @@
 **该代码从<a href="https://github.com/qqxx6661/flask_yzd">完整监控系统</a>独立而来，代码量不多，适合给刚接触python爬虫和requests的同学参考。**
 
 **目前已经开放测试：访问<a href="http://www.usau-buy.me/">电商价格监控</a>便可体验。**
-
-网站目前采用的依然是Python2版本的后台监控，正在抓紧更新中。
 
 ![image](Pagedemo.png)
 
@@ -55,7 +53,6 @@
 pip install -r requirements.txt
 ```
 
-## sqlite
 
 # 使用步骤
 
@@ -115,31 +112,31 @@ pip install -r requirements.txt
 
 - PriceMonitor
 
-    - CONFIG.py: 常用参数
+    - CONFIG.py: 常用参数
     
-    - create_db.py: 创建数据库
+    - create_db.py: 创建数据库
 
-    - conn_sql.py: 数据操作库
+    - conn_sql.py: 数据操作库
     
-    - logger.conf: 日志参数
+    - logger.conf: 日志参数
     
     - proxy.py: 代理
 
     - crawler.py: 爬虫代码
 
-    - main.py: 程序入口
+    - mailbox.txt: 邮箱参数
 
     - mail.py: 邮件模块
-    
-    - mailbox.txt: 邮箱参数
+
+    - main.py: 程序入口
    
 - requirements.txt: 安装依赖
 
 # 老版本
 
-<a href="https://github.com/qqxx6661/Price-Monitor-py2">Python2+requests+sqlite+代理池+Flask(web)</a>
+- <a href="https://github.com/qqxx6661/Price-Monitor-py2">Python2+requests+sqlite+代理池+Flask(web)</a>
 
-<a href="https://github.com/qqxx6661/Price-monitor-php">Python2+requests+mysql+代理池+Php(web)</a>
+- <a href="https://github.com/qqxx6661/Price-monitor-php">Python2+requests+mysql+代理池+Php(web)</a>
 
 # Contribution
 
@@ -147,6 +144,6 @@ pip install -r requirements.txt
 
 # Introduction
 
-Monitor price changes for items at JD.com, users could set price for specific item. Once the price is lower than excepted, the server will send an e-mail to user.
+- Monitor price changes for items at JD.com, users could set price for specific item. Once the price is lower than excepted, the server will send an e-mail to user.
 
 
