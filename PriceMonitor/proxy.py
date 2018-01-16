@@ -56,7 +56,7 @@ class Proxy(object):
         return False
 
     def get_proxy(self, proxy_option):
-        r = redis.Redis(host="115.159.190.214", port=6379, db=0)
+        r = redis.Redis(host=PROXY_POOL_IP, port=6379, db=0)
         while True:
             good_proxies = r.srandmember("good_proxies", 1)
             if good_proxies:
