@@ -3,7 +3,8 @@
 
 **Python3+requests+sqlite+代理池**
 
-[![License](https://img.shields.io/hexpm/l/plug.svg)]()[![Powered by](https://img.shields.io/badge/Powered%20by-requests-green.svg]()
+[![License](https://img.shields.io/hexpm/l/plug.svg)]()
+[![Poweredby](https://img.shields.io/badge/Powered%20by-requests-green.svg)]()
 
 **全新Python3版本：代码重构，采用协程，redis代理池，提高监控效率**
 
