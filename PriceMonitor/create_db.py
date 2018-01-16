@@ -33,5 +33,5 @@ class Monitor(Base):
 
 if __name__ == '__main__':
     # logging.basicConfig(level=logging.DEBUG)
-    engine = create_engine('sqlite:///db_demo1.db', echo=True)
+    engine = create_engine('sqlite:///db_demo.db', echo=True)
     Base.metadata.create_all(engine)

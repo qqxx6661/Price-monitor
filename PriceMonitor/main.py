@@ -14,7 +14,6 @@ import time
 
 CRAWLER_POOL = Pool(THREAD_NUM)
 
-
 class Entrance(object):
 
     @staticmethod
