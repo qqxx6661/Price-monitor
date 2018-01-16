@@ -84,7 +84,7 @@ pip install -r requirements.txt
 ## 2. 你可以选择开启代理池抓取（2.1）或者直接使用本地抓取（2.2）
 
 
-### 2.1开启代理池，采用<a href="https://github.com/ShichaoMa/proxy_factory">proxy_factory</a>基于redis的简单代理工厂，感谢作者ShichaoMa。
+### 2.1 开启代理池，采用<a href="https://github.com/ShichaoMa/proxy_factory">proxy_factory</a>基于redis的简单代理工厂，感谢作者ShichaoMa。
 
 启动redis代理池后，修改CONFIG.py的设置：
 
@@ -121,14 +121,14 @@ pip install -r requirements.txt
     
     - logger.conf: 日志参数
     
-    - proxy.py: 代理
-
-    - crawler.py: 爬虫代码
-
-    - mailbox.txt: 邮箱参数
-
+    - proxy.py: 代理
+    
+    - crawler.py: 爬虫代码
+    
+    - mailbox.txt: 邮箱参数
+    
     - mail.py: 邮件模块
-
+    
     - main.py: 程序入口
    
 - requirements.txt: 安装依赖
