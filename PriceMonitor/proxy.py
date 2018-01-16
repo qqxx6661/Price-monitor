@@ -104,7 +104,7 @@ class Proxy(object):
     def get_ua():
         ua = random.choice(USER_AGENT_LIST)
         ua = {'user-agent': ua}  # dict
-        logging.info('Generating header: %s', ua)
+        logging.debug('Generating header: %s', ua)
         return ua
 
 

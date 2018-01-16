@@ -45,7 +45,7 @@ class Entrance(object):
             while True:
                 if not self.proxy_info_zhima_name:
                     self.proxy_info_zhima_name = pr.get_proxy_zhima()
-                    print('Name proxy:', self.proxy_info_zhima_name, items)
+                print('Name proxy:', self.proxy_info_zhima_name, items)
                 name = Crawler.get_name_jd(item_id, self.proxy_info_zhima_name[0], self.proxy_info_zhima_name[1])
                 if not name:
                     self.proxy_info_zhima_name = ()
@@ -57,7 +57,7 @@ class Entrance(object):
                     while True:
                         if not self.proxy_info_zhima_price:
                             self.proxy_info_zhima_price = pr.get_proxy_zhima()
-                            print('Price proxy:', self.proxy_info_zhima_price, items)
+                        print('Price proxy:', self.proxy_info_zhima_price, items)
                         price = Crawler.get_price_jd(item_id, self.proxy_info_zhima_price[0], self.proxy_info_zhima_price[1])
                         if not price:
                             self.proxy_info_zhima_price = ()
