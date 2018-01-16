@@ -4,6 +4,7 @@ import random
 import time
 import redis
 import logging
+import requests
 from PriceMonitor.crawler import Crawler
 from PriceMonitor.CONFIG import PROXY_POOL_IP
 USER_AGENT_LIST = [
@@ -63,11 +64,11 @@ class Proxy(object):
                 good_proxies = good_proxies[0].decode("utf-8")  # byte to str
                 good_proxies = {"http": good_proxies, "https": good_proxies}
                 header = self.get_ua()
-                if proxy_option == 0:
+                if proxy_option == 0:  # jd_name
                     if not self.check_jd_name(good_proxies, header):
                         logging.warning('Validate name proxy failure, retrying')
                         continue
-                else:
+                else:  # jd_price
                     if not self.check_jd_price(good_proxies, header):
                         logging.warning('Validate price proxy failure, retrying')
                         continue
@@ -76,6 +77,28 @@ class Proxy(object):
             else:
                 logging.critical('No proxy now from remote server, retrying')
                 time.sleep(5)
+
+    def get_proxy_zhima(self):
+        url = 'http://webapi.http.zhimacangku.com/getip?num=1&type=2&pro=0' \
+              '&city=0&yys=0&port=11&pack=8241&ts=0&ys=0&cs=0&lb=1&sb=0&pb=4&mr=1&regions='
+        while True:
+            header = self.get_ua()
+            r = requests.get(url, headers=header, timeout=5)
+            logging.warning('Zhima Proxy: %s', r.json())
+            if not r.json()['data']:
+                logging.warning('No Zhima Proxy anymore or too fast. Retrying')
+                time.sleep(5)
+                continue
+            try:
+                proxy_ip = r.json()['data'][0]['ip']
+                proxy_port = r.json()['data'][0]['port']
+                good_proxies = proxy_ip + ':' + str(proxy_port)
+                good_proxies = {"http": good_proxies, "https": good_proxies}
+                return header, good_proxies
+            except:
+                logging.warning('No Zhima Proxy now. Retrying')
+                time.sleep(5)
+                continue
 
     @staticmethod
     def get_ua():

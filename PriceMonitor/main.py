@@ -14,26 +14,56 @@ import time
 
 CRAWLER_POOL = Pool(THREAD_NUM)
 
+
 class Entrance(object):
 
-    @staticmethod
-    def _item_info_update(items):
+    proxy_info_zhima_name = ()
+    proxy_info_zhima_price = ()
+
+    def _item_info_update(self, items):
         column_id = items[0]
         item_id = items[1]
         item_id = str(item_id)
         sq = Sql()
         pr = Proxy()
-        if PROXY_CRAWL:
+        if PROXY_CRAWL == 1:
             # Using free proxy pool
             while True:
-                proxy_name = pr.get_proxy(0)  # tuple: header, proxy
-                name = Crawler.get_name_jd(item_id, proxy_name[0], proxy_name[1])
+                proxy_info = pr.get_proxy(0)  # tuple: header, proxy
+                name = Crawler.get_name_jd(item_id, proxy_info[0], proxy_info[1])
                 if name:
                     sq.update_item_name(column_id, name)
                     while True:
                         proxy_price = pr.get_proxy(1)  # tuple: header, proxy
                         price = Crawler.get_price_jd(item_id, proxy_price[0], proxy_price[1])
                         if price:
+                            sq.update_item_price(column_id, price)
+                            break
+                    break
+        elif PROXY_CRAWL == 2:
+            # Using zhima proxy
+            while True:
+                if not self.proxy_info_zhima_name:
+                    self.proxy_info_zhima_name = pr.get_proxy_zhima()
+                    print('Name proxy:', self.proxy_info_zhima_name, items)
+                name = Crawler.get_name_jd(item_id, self.proxy_info_zhima_name[0], self.proxy_info_zhima_name[1])
+                if not name:
+                    self.proxy_info_zhima_name = ()
+                    time.sleep(20)
+                    continue
+                else:
+                    time.sleep(5)  # Avoid get proxy too fast
+                    sq.update_item_name(column_id, name)
+                    while True:
+                        if not self.proxy_info_zhima_price:
+                            self.proxy_info_zhima_price = pr.get_proxy_zhima()
+                            print('Price proxy:', self.proxy_info_zhima_price, items)
+                        price = Crawler.get_price_jd(item_id, self.proxy_info_zhima_price[0], self.proxy_info_zhima_price[1])
+                        if not price:
+                            self.proxy_info_zhima_price = ()
+                            time.sleep(20)
+                            continue
+                        else:
                             sq.update_item_price(column_id, price)
                             break
                     break
@@ -73,8 +103,6 @@ class Entrance(object):
                 continue
             sq.update_status(item[5])
             logging.warning('Sent email SUCCESS: %s', item[0])
-
-
 
     def run(self):
         while True:
