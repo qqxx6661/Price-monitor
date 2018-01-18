@@ -26,10 +26,11 @@
 
 - [x] 代理池重构，单独检验代理对电商网站可达性
 - [x] 爬虫采用协程gevent库，提高采集效率
-- [ ] 支持更多的代理接口使用，包括：免费代理，付费代理，vps拨号代理
-- [ ] 使用Django代替Flask
-- [ ] <a href="https://github.com/qqxx6661/Price-monitor/issues/2">商品副标题抓取</a>
-- [ ] <a href="https://github.com/qqxx6661/Price-monitor/issues/3">商品历史价格</a>
+- [ ] 支持更多的代理接口使用，包括：免费代理，付费代理，vps拨号代理（即将更新）
+- [ ] 使用Django代替Flask作为展示网站
+- [ ] <a href="https://github.com/qqxx6661/Price-monitor/issues/2">商品副标题抓取，PLUS会员价格</a>（即将更新）
+- [ ] <a href="https://github.com/qqxx6661/Price-monitor/issues/3">商品历史价格</a>（即将更新）
+- [ ] Selenium + PhantomJS/Headless Chrome 爬取（即将更新）
 - [ ] 代码覆盖率测试
 - [ ] 支持亚马逊中国，天猫等商城
 
