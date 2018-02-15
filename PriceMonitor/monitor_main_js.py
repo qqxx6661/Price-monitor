@@ -3,11 +3,11 @@
 from gevent import monkey  # IMPORT: must import gevent at first
 monkey.patch_all()
 from gevent.pool import Pool
-from PriceMonitor.proxy import Proxy
-from PriceMonitor.crawler import Crawler
-from PriceMonitor.conn_sql import Sql
-from PriceMonitor.mail import Mail
-from PriceMonitor.CONFIG import CRAWL_TIME, UPDATE_TIME, Email_TIME, PROXY_CRAWL, THREAD_NUM
+from proxy import Proxy
+from crawler_js import Crawler
+from conn_sql import Sql
+from mail import Mail
+from CONFIG import CRAWL_TIME, UPDATE_TIME, Email_TIME, PROXY_CRAWL, THREAD_NUM
 import logging
 import logging.config
 import time
@@ -26,16 +26,17 @@ class Entrance(object):
         item_id = str(item_id)
         sq = Sql()
         pr = Proxy()
+        cr = Crawler()
         if PROXY_CRAWL == 1:
             # Using free proxy pool
             while True:
                 proxy_info = pr.get_proxy(0)  # tuple: header, proxy
-                name = Crawler.get_name_jd(item_id, proxy_info[0], proxy_info[1])
+                name = cr.get_name_jd(item_id, proxy_info[0], proxy_info[1])
                 if name:
                     sq.update_item_name(column_id, name)
                     while True:
                         proxy_price = pr.get_proxy(1)  # tuple: header, proxy
-                        price = Crawler.get_price_jd(item_id, proxy_price[0], proxy_price[1])
+                        price = cr.get_price_jd(item_id, proxy_price[0], proxy_price[1])
                         if price:
                             sq.update_item_price(column_id, price)
                             break
@@ -46,7 +47,7 @@ class Entrance(object):
                 if not self.proxy_info_zhima_name:
                     self.proxy_info_zhima_name = pr.get_proxy_zhima()
                 print('Name proxy:', self.proxy_info_zhima_name, items)
-                name = Crawler.get_name_jd(item_id, self.proxy_info_zhima_name[0], self.proxy_info_zhima_name[1])
+                name = cr.get_name_jd(item_id, self.proxy_info_zhima_name[0], self.proxy_info_zhima_name[1])
                 if not name:
                     self.proxy_info_zhima_name = ()
                     time.sleep(20)
@@ -58,7 +59,7 @@ class Entrance(object):
                         if not self.proxy_info_zhima_price:
                             self.proxy_info_zhima_price = pr.get_proxy_zhima()
                         print('Price proxy:', self.proxy_info_zhima_price, items)
-                        price = Crawler.get_price_jd(item_id, self.proxy_info_zhima_price[0], self.proxy_info_zhima_price[1])
+                        price = cr.get_price_jd(item_id, self.proxy_info_zhima_price[0], self.proxy_info_zhima_price[1])
                         if not price:
                             self.proxy_info_zhima_price = ()
                             time.sleep(20)
@@ -69,9 +70,9 @@ class Entrance(object):
                     break
         else:
             # Using local ip
-            name = Crawler.get_name_jd(item_id, pr.get_ua())
+            name = cr.get_name_jd(item_id, pr.get_ua())
             sq.update_item_name(column_id, name)
-            price = Crawler.get_price_jd(item_id, pr.get_ua())
+            price = cr.get_price_jd(item_id, pr.get_ua())
             sq.update_item_price(column_id, price)
             return name, price
 

@@ -41,15 +41,22 @@ USER_AGENT_LIST = [
 class Proxy(object):
 
     @staticmethod
-    def check_jd(proxy, header):
+    def check_jd_name(proxy, header):
         logging.info('Validating name proxy: %s', proxy)
-        cr = Crawler(proxy)
-        item_name = cr.get_jd_item('5089253')  # Iphone X
-        if item_name:
+        item_name = Crawler.get_name_jd('5089253', header, proxy)  # Iphone X
+        if '手机' in item_name:
             return True
         return False
 
-    def get_proxy(self):
+    @staticmethod
+    def check_jd_price(proxy, header):
+        logging.info('Validating price proxy: %s', proxy)
+        item_price = Crawler.get_price_jd('5089253', header, proxy)  # Iphone X
+        if item_price:
+            return True
+        return False
+
+    def get_proxy(self, proxy_option):
         r = redis.Redis(host=PROXY_POOL_IP, port=6379, db=0)
         while True:
             good_proxies = r.srandmember("good_proxies", 1)
@@ -57,8 +64,13 @@ class Proxy(object):
                 good_proxies = good_proxies[0].decode("utf-8")  # byte to str
                 good_proxies = {"http": good_proxies, "https": good_proxies}
                 header = self.get_ua()
-                if not self.check_jd(good_proxies, header):
-                        logging.warning('Validate proxy failure, retrying')
+                if proxy_option == 0:  # jd_name
+                    if not self.check_jd_name(good_proxies, header):
+                        logging.warning('Validate name proxy failure, retrying')
+                        continue
+                else:  # jd_price
+                    if not self.check_jd_price(good_proxies, header):
+                        logging.warning('Validate price proxy failure, retrying')
                         continue
                 logging.info('Validate SUCCESS，using proxy: %s', good_proxies)
                 return header, good_proxies
@@ -101,5 +113,5 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     p = Proxy()
     p.get_ua()
-    # p.get_proxy()
-    p.get_proxy_zhima()
+    p.get_proxy(1)
+    # p.get_proxy_zhima()
