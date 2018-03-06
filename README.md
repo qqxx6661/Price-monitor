@@ -12,19 +12,20 @@
 
 **功能：京东商城商品价格监控，用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
 
-**该代码从<a href="https://github.com/qqxx6661/flask_yzd">完整监控系统</a>独立而来，代码量不多，适合给刚接触python爬虫和requests的同学参考。**
 
 **目前支持品类监控的网站已开放注册：访问<a href="https://pricemonitor.online/">电商价格监控</a>便可体验。**
 
 ![image](Pagedemo.png)
 
+![image2](Pagedemo2.png)
+
 **申明：该项目只限于爬取网上公开可见的商品信息，请勿用于任何商业使用。**
 
 # 最近更新
 
-- Selenium + Headless Chrome 爬取
+- Selenium + Headless Chrome爬取
 - 商品副标题、商品历史价格抓取
-- 额外支持Mysql数据库（需修改设置）
+- 额外支持Mysql数据库
 
 # TODO List
 
@@ -33,7 +34,7 @@
 - [x] 代理池重构，单独检验代理对电商网站可达性
 - [x] 爬虫采用协程gevent库，提高采集效率
 - [x] 支持更多的代理接口使用，包括：免费代理，付费代理，vps拨号代理（即将更新）
-- [ ] 使用Django代替Flask作为展示网站
+- [x] 使用Django代替Flask作为网站后台
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/2">商品副标题抓取，PLUS会员价格</a>（即将更新）
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/3">商品历史价格</a>（即将更新）
 - [x] Selenium + PhantomJS/Headless Chrome 爬取（即将更新）
@@ -55,6 +56,7 @@
 - requests
 - gevent
 - lxml
+- selenium(可选)
 
 可以使用项目自带的requirements.txt安装环境
 
