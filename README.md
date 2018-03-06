@@ -17,7 +17,7 @@
 
 ![image](Pagedemo.png)
 
-![image2](Pagedemo2.png)
+![image2](pagedemo2.png)
 
 **申明：该项目只限于爬取网上公开可见的商品信息，请勿用于任何商业使用。**
 
