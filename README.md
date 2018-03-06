@@ -14,7 +14,7 @@
 
 **该代码从<a href="https://github.com/qqxx6661/flask_yzd">完整监控系统</a>独立而来，代码量不多，适合给刚接触python爬虫和requests的同学参考。**
 
-**目前已经开放测试：访问<a href="http://www.usau-buy.me/">电商价格监控</a>便可体验。**
+**目前支持品类监控的网站已开放注册：访问<a href="https://pricemonitor.online/">电商价格监控</a>便可体验。**
 
 ![image](Pagedemo.png)
 
