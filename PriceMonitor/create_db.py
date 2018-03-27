@@ -58,6 +58,6 @@ class SmartPhone_9987653655(Base):
 
 if __name__ == '__main__':
     # logging.basicConfig(level=logging.DEBUG)
-    # engine = create_engine('sqlite:///db_demo.db', echo=True)
-    engine = create_engine('mysql+pymysql://root:root@localhost/pricemonitor?charset=utf8', echo=True, )
+    engine = create_engine('sqlite:///db_demo.db', echo=True)
+    # engine = create_engine('mysql+pymysql://root:root@localhost/pricemonitor?charset=utf8', echo=True, )
     Base.metadata.create_all(engine)
