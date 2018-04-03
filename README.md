@@ -1,7 +1,7 @@
 
 **Price-Monitor:电商价格监控**
 
-**Python3+requests+sqlite+代理池**
+**Python3+requests/selenium+sqlite/mysql+免费代理池/代理接口**
 
 [![License](https://img.shields.io/badge/license-GPLv3-yellowgreen.svg)]()
 [![Poweredby](https://img.shields.io/badge/Powered%20by-requests-green.svg)]()
@@ -10,8 +10,9 @@
 
 # 简介
 
-**功能：京东商城商品价格监控，用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
+**功能1：京东商城商品价格监控，用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
 
+**功能2：京东商城品类商品价格监控，目前数码品类开放监控，低于设定折扣（75折）的自营商品会被选出并发送邮件提醒用户抢购。**
 
 **目前支持品类监控的网站已开放注册：访问<a href="https://pricemonitor.online/">电商价格监控</a>便可体验。**
 
