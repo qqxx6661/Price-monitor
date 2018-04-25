@@ -10,42 +10,46 @@
 
 # 简介
 
-**功能1：京东商城商品价格监控，用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
+**用户指定商品监控：用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
 
-**功能2：京东商城品类商品价格监控，目前数码品类开放监控，低于设定折扣（75折）的自营商品会被选出并发送邮件提醒用户抢购。**
+**品类商品监控：目前数码品类开放监控，低于设定折扣（75折）的自营商品会被选出并发送邮件提醒用户抢购。**
 
-**目前支持品类监控的网站已开放注册：访问<a href="https://pricemonitor.online/">电商价格监控</a>便可体验。**
+**目前网站已开放：访问<a href="https://pricemonitor.online/">电商价格监控</a>便可体验。**
 
 ![image](Pagedemo.png)
 
-![image2](pagedemo2.png)
+![image2](Pagedemo2.png)
 
-**申明：该项目只限于爬取网上公开可见的商品信息，请勿用于任何商业使用。**
+![image3](Pagedemo3.png)
+
+**申明：本项目仅限于爬取网上公开可见的商品信息，且未用于任何商业用途。**
 
 # 最近更新
 
 - Selenium + Headless Chrome爬取
-- 商品副标题、商品历史价格抓取
-- 额外支持Mysql数据库
+- 商品副标题/商品历史价格抓取
+- 增加Mysql数据库支持
 
 # TODO List
 
 ### 持续更新中
 
 - [x] 代理池重构，单独检验代理对电商网站可达性
-- [x] 爬虫采用协程gevent库，提高采集效率
-- [x] 支持更多的代理接口使用，包括：免费代理，付费代理，vps拨号代理（即将更新）
+- [x] 爬虫采用协程库，提高采集效率
+- [x] 支持更多的代理接口：免费代理，付费代理，vps拨号代理
 - [x] 使用Django代替Flask作为网站后台
-- [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/2">商品副标题抓取，PLUS会员价格</a>（即将更新）
-- [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/3">商品历史价格</a>（即将更新）
-- [x] Selenium + PhantomJS/Headless Chrome 爬取（即将更新）
+- [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/2">商品副标题抓取，PLUS会员价格</a>
+- [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/3">商品历史价格</a>
+- [x] Selenium + PhantomJS/Headless Chrome 爬取
+- [ ] Docker一键部署（即将更新）
+- [ ] 支持亚马逊中国，天猫，淘宝等商城
 - [ ] 代码覆盖率测试
 
 
 ### 其他功能（欢迎Issue提供意见）
 
 - [ ] <a href="https://github.com/qqxx6661/Price-monitor/issues/1">小说更新监控</a>
-- [ ] 支持亚马逊中国，天猫等商城
+
 
 
 # 项目依赖
