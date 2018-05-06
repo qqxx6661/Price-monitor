@@ -6,12 +6,12 @@
 
 1. 注册QQ号，申请QQ邮箱，登陆，随后如图所示进入设置-账户
 
-![image](Email01.png)
+![Email01](Email01.png)
 
 
 2. 下翻至如图所示位置，开启POP3/SMTP服务或IMAP/SMTP服务，会得到加密密钥
 
-![image](Email02.png)
+![Email02](Email02.png)
 
 3. 找到本项目文件中PriceMonitor-mailbox.txt文件，自行设置邮箱，大部分邮箱都支持，比如QQ，gamil，校园邮箱，网易等
 

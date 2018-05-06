@@ -6,29 +6,31 @@
 [![License](https://img.shields.io/badge/license-GPLv3-yellowgreen.svg)]()
 [![Poweredby](https://img.shields.io/badge/Powered%20by-requests-green.svg)]()
 
-**全新Python3版本：代码重构，采用协程，redis代理池，提高监控效率**
+**全新Python3版本：支持协程，redis代理池，提高监控效率，持续更新中。**
 
 # 简介
 
-**用户指定商品监控：用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
+**1. 用户指定商品监控：用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
 
-**品类商品监控：目前数码品类开放监控，低于设定折扣（75折）的自营商品会被选出并发送邮件提醒用户抢购。**
+**2. 品类商品监控：目前数码品类开放监控，低于设定折扣（75折）的自营商品会被选出并发送邮件提醒用户抢购。**
+
+![Structure](docs/Structure.png)
 
 **目前网站已开放：访问<a href="https://pricemonitor.online/">电商价格监控</a>便可体验。**
 
-![image](Pagedemo.png)
+![Pagedemo](docs/Pagedemo.png)
 
-![image2](Pagedemo2.png)
+![Pagedemo2](docs/Pagedemo2.png)
 
-![image3](Pagedemo3.png)
+![Pagedemo3](docs/Pagedemo3.png)
 
-**申明：本项目仅限于爬取网上公开可见的商品信息，且未用于任何商业用途。**
+**申明：本项目仅限于爬取网上公开可见的商品信息，请勿用于任何商业用途。**
 
 # 最近更新
 
 - Selenium + Headless Chrome爬取
 - 商品副标题/商品历史价格抓取
-- 增加Mysql数据库支持
+- 增加对Mysql数据库支持
 
 # TODO List
 
@@ -41,9 +43,11 @@
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/2">商品副标题抓取，PLUS会员价格</a>
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/3">商品历史价格</a>
 - [x] Selenium + PhantomJS/Headless Chrome 爬取
+- [ ] 更方便的添加监控商品
 - [ ] Docker一键部署（即将更新）
 - [ ] 支持亚马逊中国，天猫，淘宝等商城
 - [ ] 代码覆盖率测试
+- [ ] 继续重构
 
 
 ### 其他功能（欢迎Issue提供意见）
@@ -90,7 +94,7 @@ pip install -r requirements.txt
     sql.write_item(2777811, '10', 1)
 ```
 
-![image](Sqlitedemo.png)
+![Sqlitedemo](docs/Sqlitedemo.png)
 
 ## 1. 设置邮件提醒的发件邮箱
 
