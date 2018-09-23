@@ -17,6 +17,7 @@
 ![Structure](docs/Structure.png)
 
 **目前网站已开放：访问<a href="https://pricemonitor.online/">电商价格监控</a>便可体验。**
+**2018.9.22更新：网站遭受勒索者攻击，数据库被锁，暂时停止服务，预计10月恢复。**
 
 ![Pagedemo](docs/Pagedemo.png)
 
