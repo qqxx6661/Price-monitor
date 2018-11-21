@@ -1,14 +1,15 @@
 
 **Price-Monitor:电商价格监控**
 
-**Python3+requests/selenium+sqlite/mysql+免费代理池/代理接口**
+**Python3+Requests/Selenium+Sqlite/Mysql+免费代理池/代理接口**
 
 [![License](https://img.shields.io/badge/license-GPLv3-yellowgreen.svg)]()
 [![Poweredby](https://img.shields.io/badge/Powered%20by-requests-green.svg)]()
 
-**全新Python3版本：支持协程，redis代理池，提高监控效率，持续更新中。**
 
 # 简介
+
+**实现功能：**
 
 **1. 用户指定商品监控：用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
 
@@ -16,8 +17,8 @@
 
 ![Structure](docs/Structure.png)
 
-**目前网站已开放：访问<a href="https://pricemonitor.online/">电商价格监控</a>便可体验。**
-**2018.9.24更新：网站遭受勒索者攻击，数据库回档至8月份的备份，部分已经注册过的用户可能需要重新注册。**
+**目前网站已开放：访问电商价格监控平台：<a href="https://pricemonitor.online/">https://pricemonitor.online/</a>便可体验。**
+
 
 ![Pagedemo](docs/Pagedemo.png)
 
@@ -27,6 +28,10 @@
 
 **申明：本项目仅限于爬取网上公开可见的商品信息，请勿用于任何商业用途。**
 
+## 关于网站
+
+该库开源的是爬虫代码，网站前后端代码暂时未开源，网页采用Springboot+React编写，请关注我的博客，之后会另开新库开放网站源代码。
+
 # 最近更新
 
 - Selenium + Headless Chrome爬取
@@ -35,20 +40,18 @@
 
 # TODO List
 
-### 持续更新中
+**持续更新中**
 
 - [x] 代理池重构，单独检验代理对电商网站可达性
 - [x] 爬虫采用协程库，提高采集效率
 - [x] 支持更多的代理接口：免费代理，付费代理，vps拨号代理
-- [x] 使用Django代替Flask作为网站后台
+- [x] 使用Springboot代替Django作为网站后台
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/2">商品副标题抓取，PLUS会员价格</a>
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/3">商品历史价格</a>
 - [x] Selenium + PhantomJS/Headless Chrome 爬取
-- [ ] 更方便的添加监控商品
+- [ ] 更方便的添加监控商品：正则匹配商品编号
 - [ ] Docker一键部署（即将更新）
 - [ ] 支持亚马逊中国，天猫，淘宝等商城
-- [ ] 代码覆盖率测试
-- [ ] 继续重构
 
 
 ### 其他功能（欢迎Issue提供意见）
