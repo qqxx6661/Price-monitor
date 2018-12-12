@@ -5,19 +5,21 @@
 
 [![License](https://img.shields.io/badge/license-GPLv3-yellowgreen.svg)]()
 [![Poweredby](https://img.shields.io/badge/Powered%20by-requests-green.svg)]()
+[![Poweredby](https://img.shields.io/badge/Powered%20by-celery-green.svg)]()
+[![Poweredby](https://img.shields.io/badge/Powered%20by-celery-green.svg)]()
 
+**目前网站已开放：访问电商价格监控平台：<a href="https://pricemonitor.online/">https://pricemonitor.online/</a>便可体验。**
 
 # 简介
 
 **实现功能：**
 
-**1. 用户指定商品监控：用户自行设置商品和预期价格，低于预期价格后自动发送邮件提醒用户抢购。**
+**【功能一】自定义商品监控：设置商品ID和预期价格，当商品价格【低于】设定的预期价格后自动发送邮件提醒用户。**
 
-**2. 品类商品监控：目前数码品类开放监控，低于设定折扣（75折）的自营商品会被选出并发送邮件提醒用户抢购。**
+**【功能二】品类商品订阅：用户订阅后，该类降价幅度大于7折的【自营商品】会被选出并发送邮件提醒用户。**
 
 ![Structure](docs/Structure.png)
 
-**目前网站已开放：访问电商价格监控平台：<a href="https://pricemonitor.online/">https://pricemonitor.online/</a>便可体验。**
 
 
 ![Pagedemo](docs/Pagedemo.png)
