@@ -5,7 +5,7 @@
 
 [![License](https://img.shields.io/badge/license-GPLv3-yellowgreen.svg)]()
 [![Poweredby](https://img.shields.io/badge/Powered%20by-requests-green.svg)]()
-[![Poweredby](https://img.shields.io/badge/Powered%20by-celery-green.svg)]()
+[![Poweredby](https://img.shields.io/badge/Powered%20by-selenium-green.svg)]()
 [![Poweredby](https://img.shields.io/badge/Powered%20by-celery-green.svg)]()
 
 **目前网站已开放：访问电商价格监控平台：<a href="https://pricemonitor.online/">https://pricemonitor.online/</a>便可体验。**
@@ -18,7 +18,7 @@
 
 **【功能二】品类商品订阅：用户订阅后，该类降价幅度大于7折的【自营商品】会被选出并发送邮件提醒用户。**
 
-![Structure](docs/Structure.png)
+
 
 
 
@@ -28,17 +28,19 @@
 
 ![Pagedemo3](docs/Pagedemo3.png)
 
+![Structure](docs/Structure.png)
+
 **申明：本项目仅限于爬取网上公开可见的商品信息，请勿用于任何商业用途。**
 
-## 关于网站
+## 关于web网站
 
-该库开源的是爬虫代码，网站前后端代码暂时未开源，网页采用Springboot+React编写，请关注我的博客，之后会另开新库开放网站源代码。
+该库仅为爬虫模块代码，网站前后端代码暂时未开源，采用Springboot+React编写，请关注博客，之后会另开新库开放web端源代码。
 
 # 最近更新
 
 - Selenium + Headless Chrome爬取
-- 商品副标题/商品历史价格抓取
-- 增加对Mysql数据库支持
+- 商品副标题/商品历史价格爬取
+- 京东卡券价格，京东精选价格爬取
 
 # TODO List
 
@@ -51,7 +53,7 @@
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/2">商品副标题抓取，PLUS会员价格</a>
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/3">商品历史价格</a>
 - [x] Selenium + PhantomJS/Headless Chrome 爬取
-- [ ] 更方便的添加监控商品：正则匹配商品编号
+- [x] 更方便的添加监控商品
 - [ ] Docker一键部署（即将更新）
 - [ ] 支持亚马逊中国，天猫，淘宝等商城
 
