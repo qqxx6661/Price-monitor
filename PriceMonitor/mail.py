@@ -48,7 +48,7 @@ class Mail(object):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    send_email = Mail('test', 'wo', 'ni', 'test', '404013419@qq.com')
+    send_email = Mail('test', 'wo', 'ni', 'test', 'xxxxxxx@qq.com')
     send_email.send()
 
 
