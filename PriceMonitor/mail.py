@@ -8,6 +8,7 @@ from os import path
 import os
 import logging
 
+
 class Mail(object):
     # mailbox setting
     local_dir = path.dirname(__file__)
@@ -50,6 +51,3 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     send_email = Mail('test', 'wo', 'ni', 'test', 'xxxxxxx@qq.com')
     send_email.send()
-
-
-

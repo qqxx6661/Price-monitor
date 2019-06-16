@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # coding=utf-8
 import re
-
-from gevent import monkey  # IMPORT: must import gevent at first
-monkey.patch_all()
 import logging
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, StaleElementReferenceException
@@ -113,26 +110,6 @@ class Crawler(object):
         self.chrome.quit()
         return huihui_info
 
-    def get_cate_item(self, url):
-        item_infos = []
-        try:
-            self.chrome.get(url)
-            item_names = self.chrome.find_elements_by_xpath("//*[@class='gl-item']/div/div[4]/a/em")
-            item_subtitles = self.chrome.find_elements_by_xpath("//*[@class='gl-item']/div/div[4]/a")
-            item_prices = self.chrome.find_elements_by_xpath("//*[@class='gl-item']/div/div[3]/strong[1]/i")
-            item_ids = self.chrome.find_elements_by_xpath("//*[@class='gl-item']/div/div[6]/a")
-            for i in range(len(item_names)):
-                item_infos.append([item_ids[i].get_attribute('data-sku'),
-                                   item_names[i].text, item_prices[i].text, item_subtitles[i].get_attribute('title')])
-            logging.info('item_infos: {}'.format(item_infos))
-        except StaleElementReferenceException as e:
-            logging.warning('Crawl failure: %s', e)
-        except NoSuchElementException as e:
-            logging.warning('Crawl failure: %s', e)
-        except TimeoutException as e:
-            logging.warning('Crawl failure: %s', e)
-        self.chrome.quit()
-        return item_infos
 
 
 if __name__ == '__main__':
@@ -142,7 +119,5 @@ if __name__ == '__main__':
     # c = Crawler({'http': '125.105.32.168:7305', 'https': '171.211.32.79:2456'})
     logging.debug(c.get_jd_item('2777811'))
     # logging.debug(c.get_huihui_item('2777811'))
-    # logging.debug(c.get_cate_item('https://list.jd.com/list.html?cat=9987,653,655&page=2'
-    #                               '&sort=sort_rank_asc&trans=1&JL=6_0_0&ms=6#J_main'))
     end = time.time()
     print(end-start)

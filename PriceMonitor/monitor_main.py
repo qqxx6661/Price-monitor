@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 # coding=utf-8
-from gevent import monkey  # IMPORT: must import gevent at first
-monkey.patch_all()
-from gevent.pool import Pool
 from proxy import Proxy
 from crawler_selenium import Crawler
 from conn_sql import Sql
@@ -11,13 +8,20 @@ from CONFIG import ITEM_CRAWL_TIME, UPDATE_TIME, Email_TIME, PROXY_CRAWL, THREAD
 import logging
 import logging.config
 import time
-from os import path  # Supervisor cannot find logger.conf
-CRAWLER_POOL = Pool(THREAD_NUM)
+from os import path
 
 
 class Entrance(object):
 
     proxy_info_zhima= ()
+
+    @staticmethod
+    def _check_item():
+        sq = Sql()
+        updated_time = UPDATE_TIME
+        items = sq.read_all_not_updated_item(updated_time)
+        logging.warning('This loop: %s', items)
+        return items
 
     def _item_info_update(self, items):
         column_id = items[0]
@@ -80,13 +84,7 @@ class Entrance(object):
             sq.update_item_min_price(column_id, huihui_info[1])
         return item_info
 
-    @staticmethod
-    def _check_item():
-        sq = Sql()
-        updated_time = UPDATE_TIME
-        items = sq.read_all_not_updated_item(updated_time)
-        logging.warning('This loop: %s', items)
-        return items
+
 
     @staticmethod
     def _send_email():

@@ -7,8 +7,7 @@ import logging
 
 
 class Crawler(object):
-    # TODO: Move get_url to independent function
-    # TODO: Add them to sql
+
     @staticmethod
     def get_info_huihui(item_id, header, proxy=None):
         url = 'https://zhushou.huihui.cn/productSense?phu=https://item.jd.com/' + item_id + '.html'
@@ -164,9 +163,9 @@ if __name__ == '__main__':
     # logging.debug(c.get_name_jd('2777811', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
     #                                                       'AppleWebKit/536.6 (KHTML, like Gecko) '
     #                                                       'Chrome/20.0.1092.0 Safari/536.6'}))
-    logging.debug(c.get_subtitle_jd('5181380', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
-                                                          'AppleWebKit/536.6 (KHTML, like Gecko) '
-                                                          'Chrome/20.0.1092.0 Safari/536.6'}))
+    # logging.debug(c.get_subtitle_jd('5181380', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
+    #                                                       'AppleWebKit/536.6 (KHTML, like Gecko) '
+    #                                                       'Chrome/20.0.1092.0 Safari/536.6'}))
     # logging.debug(c.get_info_huihui('2777811', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
     #                                                           'AppleWebKit/536.6 (KHTML, like Gecko) '
     #                                                           'Chrome/20.0.1092.0 Safari/536.6'}))
