@@ -7,6 +7,10 @@
 [![Poweredby](https://img.shields.io/badge/Powered%20by-requests-green.svg)]()
 [![Poweredby](https://img.shields.io/badge/Powered%20by-selenium-green.svg)]()
 
+该项目README分为两部分：
+
+- 电商价格监控网站介绍
+- 本开源代码爬虫项目介绍和使用指南
 
 # 电商价格监控
 
@@ -56,7 +60,7 @@
 
 ### 技术
 
--  代理池重构，单独检验代理对电商网站可达性
+- [x] 代理池重构，单独检验代理对电商网站可达性
 - [x] 支持2种代理接口：芝麻代理， Redis代理
 - [x] 使用Springboot代替Django作为网站后台
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/2">商品副标题抓取，PLUS会员价格</a>
