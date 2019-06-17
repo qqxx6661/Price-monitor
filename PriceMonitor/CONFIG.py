@@ -1,7 +1,6 @@
 # All time in seconds
-ITEM_CRAWL_TIME = 600  # Monitor sleep time, if not using proxy, CRAWL_TIME > 1800 recommended.
-UPDATE_TIME = 100  # Crawl item which updated before this time value
+ITEM_CRAWL_TIME = 60 * 10  # Monitor loop time, if not using proxy
+UPDATE_TIME = 60 * 10  # Crawl item which updated before this time value
 Email_TIME = 10  # Send email sleep time
-PROXY_CRAWL = 0  # 1: Use proxy pool 0: Use local ip 2: Use zhi ma ip
-PROXY_POOL_IP = "127.0.0.1"  # Your redis server ip
-DISCOUNT_LIMIT = 0.8  # Set alert mail discount
+PROXY_CRAWL = 0  # 0: Use local ip 1: Use proxy pool 2: Use zhi ma ip
+PROXY_POOL_IP = "127.0.0.1"  # Redis server ip

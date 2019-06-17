@@ -7,14 +7,14 @@
 [![Poweredby](https://img.shields.io/badge/Powered%20by-requests-green.svg)]()
 [![Poweredby](https://img.shields.io/badge/Powered%20by-selenium-green.svg)]()
 
-该项目README分为两部分：
+**该项目README分为两部分：**
 
-- 电商价格监控网站介绍
-- 本开源代码爬虫项目介绍和使用指南
+- 电商价格监控网站
+- 本开源代码：爬虫模块
 
 # 电商价格监控
 
-由该开源爬虫孵化的项目**电商价格监控**目前已上线运营：访问电商价格监控平台：
+由该开源**爬虫模块**孵化的项目**电商价格监控**目前已上线运营：访问电商价格监控平台
 
 <a href="https://price.monitor4all.cn/">https://price.monitor4all.cn/</a>
 

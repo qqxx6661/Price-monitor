@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from create_db import Base, User, Monitor
 import datetime
-from CONFIG import DISCOUNT_LIMIT
+from CONFIG import UPDATE_TIME
 
 
 class Sql(object):
@@ -38,56 +38,25 @@ class Sql(object):
                 exist[0].discount = round(float(item_info[2]) / float(exist[0].last_price), 2)
                 logging.warning('Item id %s changed price: %s to %s', item_info[0], exist[0].last_price, item_info[2])
         else:
-            new_item = Monitor(item_id=item_info[0], user_price=item_info[1], user_id=item_info[2], status=1, add_time=time_now, update_time=time_now)
+            new_item = Monitor(item_id=item_info[0], user_price=item_info[1], user_id=item_info[2], status=1,
+                               add_time=time_now, update_time=time_now)
             self.session.add(new_item)
         self.session.commit()
 
-    def read_all_not_updated_item(self, update_time):
+    def read_all_not_updated_item(self):
         time_now = datetime.datetime.now()
-        need_item = []
-        all_items = self.session.query(Monitor).all()
-        for item in all_items:
-            if item.status == 1:
-                time_delta = (time_now - item.update_time).days * 86400 + (time_now - item.update_time).seconds
-                logging.info('%s\'s time delta: %s', item.item_id, time_delta)
-                if time_delta >= update_time:
-                    need_item.append((item.column_id, item.item_id))
-        return need_item
-
-    def check_item_need_to_remind(self):
-        monitor_items = []
-        alert_items = []
-        items = self.session.query(Monitor).all()
-        for item in items:
-            if item.discount and float(item.discount) <= DISCOUNT_LIMIT:
-                user = self.session.query(User).filter_by(column_id=item.user_id)
-                alert_items.append([user[0].email, item.item_name, item.item_price,
-                                    item.discount, item.item_id, item.column_id, item.last_price])
-            if item.status == 1 and item.user_price:
-                if float(item.user_price) > float(item.item_price):  # User-defined monitor price items
-                    user = self.session.query(User).filter_by(column_id=item.user_id)
-                    monitor_items.append([user[0].email, item.item_name, item.item_price,
-                                          item.user_price, item.item_id, item.column_id])
-        return monitor_items, alert_items
-
-    def check_cate_item_need_to_remind(self):
-        # TODO: use cate_name parameter
-        alert_items = []
-        items = self.session.query(Monitor).filter_by(status=1).all()
-        for item in items:
-            if item.discount and float(item.discount) <= DISCOUNT_LIMIT:
-                alert_items.append([item.item_name, item.item_price, item.discount,
-                                    item.item_id, item.column_id, item.last_price, item.subtitle])
-                item.status = 0  # set status to 0 for avoiding to send duplicate mails
-        return alert_items
-
-    def check_cate_user_mail(self, cate_name):
-        user_mails = []
-        # TODO: extract cate_name from category string
-        users = self.session.query(User).filter_by(category=cate_name).all()
-        for user in users:
-            user_mails.append(user.email)
-        return user_mails
+        items_need = []
+        items_all = self.session.query(Monitor).all()
+        for item_all in items_all:
+            item_need = {}
+            if item_all.status == 1:
+                time_delta = (time_now - item_all.update_time).days * 86400 + (time_now - item_all.update_time).seconds
+                logging.info('%s\'s time delta: %s', item_all.item_id, time_delta)
+                if time_delta >= UPDATE_TIME:
+                    item_need['column_id'] = item_all.column_id
+                    item_need['item_id'] = item_all.item_id
+                    items_need.append(item_need)
+        return items_need
 
     def update_item_name(self, column_id, item_name):
         update_item = self.session.query(Monitor).get(column_id)
@@ -128,6 +97,24 @@ class Sql(object):
         update_item = self.session.query(Monitor).get(column_id)
         update_item.status = 0
         self.session.commit()
+
+    def check_item_need_to_remind(self):
+        # items_alert = {column_id, item_id, user_price, item_price, name, email}
+        items_alert = []
+        items = self.session.query(Monitor).all()
+        for item in items:
+            item_alert = {}
+            if item.status == 1 and item.user_price:
+                if float(item.user_price) > float(item.item_price):
+                    user = self.session.query(User).filter_by(column_id=item.user_id)
+                    item_alert['email'] = user[0].email
+                    item_alert['name'] = item.item_name
+                    item_alert['item_price'] = item.item_price
+                    item_alert['user_price'] = item.user_price
+                    item_alert['item_id'] = item.item_id
+                    item_alert['column_id'] = item.column_id
+                    items_alert.append(item_alert)
+        return items_alert
 
 
 if __name__ == '__main__':
