@@ -75,7 +75,7 @@
 
 
 
-# 本开源代码：Price-Monitor（京东价格监控）
+# 本开源代码：Price-Monitor（京东商品信息爬虫）
 
 ## 文件结构
 
@@ -110,17 +110,36 @@
 
 Python 3.5/3.6
 
-主要包含以下库：
+主要需要以下库：
 
 - requests
 - lxml
-- selenium(可选)
+- selenium
 
 可以创建环境后，使用项目自带的requirements.txt一键安装环境
 
 ```
 pip install -r requirements.txt
 ```
+
+我们的爬虫有两种方式：
+
+- Js接口爬取
+- Selenium+Chrome网页渲染爬取
+
+默认使用Selenium+Chrome进行京东商品爬取，因为Js接口变化频繁，需要频繁修改代码。
+
+
+
+若您使用默认的Selenium+Chrome，您还需要安装好Chrome，以及Selenium用来操控Chrome的ChromeDriver。
+
+http://npm.taobao.org/mirrors/chromedriver/
+
+推荐采用2.35/2.36
+
+若您在Windows下调试本项目，可以将ChromeDriver放置在任何配置了环境变量的目录下，我放在了C:/Windows/chromedriver.exe
+
+若您使用Js爬取，不需要任何额外的库
 
 ### 1. 运行脚本，新建Sqlite数据库，添加测试商品
 

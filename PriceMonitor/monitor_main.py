@@ -33,17 +33,18 @@ class Entrance(object):
         if PROXY_CRAWL == 1:
             # Using free proxy pool
             while True:
-                proxy_info = pr.get_proxy()  # tuple: header, proxy
+                # tuple: header, proxy. Header for Js crawler
+                proxy_info = pr.get_proxy()
                 cr = Crawler(proxy_info[1])
                 item_info = cr.get_jd_item(item_id)
-                if item_info:  # name, price, subtitle, plus_price
-                    sq.update_item_name(column_id, item_info[0])
-                    sq.update_item_price(column_id, item_info[1])
-                    sq.update_item_subtitle(column_id, item_info[2])
-                    sq.update_item_plus_price(column_id, item_info[3])
-                    cr = Crawler(proxy_info[1])  # MUST create new instance otherwise got error
+                if item_info:
+                    sq.update_item_name(column_id, item_info['name'])
+                    sq.update_item_price(column_id, item_info['price'])
+                    sq.update_item_plus_price(column_id, item_info['plus_price'])
+                    sq.update_item_subtitle(column_id, item_info['subtitle'])
+                    cr = Crawler(proxy_info[1])
                     huihui_info = cr.get_huihui_item(item_id)
-                    if huihui_info:  # skip this if not crawled
+                    if huihui_info:
                         sq.update_item_max_price(column_id, huihui_info[0])
                         sq.update_item_min_price(column_id, huihui_info[1])
                     break
@@ -53,6 +54,7 @@ class Entrance(object):
                 if not self.proxy_info_zhima:
                     self.proxy_info_zhima = pr.get_proxy_zhima()
                 logging.info('Zhima proxy: %s', self.proxy_info_zhima[1])
+                # tuple: header, proxy. Header for Js crawler
                 cr = Crawler(self.proxy_info_zhima[1])
                 item_info = cr.get_jd_item(item_id)
                 if not item_info:
@@ -61,15 +63,15 @@ class Entrance(object):
                     time.sleep(5)
                     continue
                 else:
-                    sq.update_item_name(column_id, item_info[0])
-                    sq.update_item_price(column_id, item_info[1])
-                    sq.update_item_subtitle(column_id, item_info[2])
-                    sq.update_item_plus_price(column_id, item_info[3])
-                    cr = Crawler(self.proxy_info_zhima[1])  # MUST create new instance otherwise got error
+                    sq.update_item_name(column_id, item_info['name'])
+                    sq.update_item_price(column_id, item_info['price'])
+                    sq.update_item_plus_price(column_id, item_info['plus_price'])
+                    sq.update_item_subtitle(column_id, item_info['subtitle'])
+                    cr = Crawler(self.proxy_info_zhima[1])
                     huihui_info = cr.get_huihui_item(item_id)
-                    if huihui_info:  # skip this if not crawled
-                        sq.update_item_max_price(column_id, huihui_info[0])
-                        sq.update_item_min_price(column_id, huihui_info[1])
+                    if huihui_info:
+                        sq.update_item_max_price(column_id, huihui_info['max_price'])
+                        sq.update_item_min_price(column_id, huihui_info['min_price'])
                     break
         else:
             # Using local ip
@@ -84,8 +86,9 @@ class Entrance(object):
             cr = Crawler()
             # huihui_info = {max_price, min_price}
             huihui_info = cr.get_huihui_item(item_id)
-            sq.update_item_max_price(column_id, huihui_info['max_price'])
-            sq.update_item_min_price(column_id, huihui_info['min_price'])
+            if huihui_info:
+                sq.update_item_max_price(column_id, huihui_info['max_price'])
+                sq.update_item_min_price(column_id, huihui_info['min_price'])
 
         return item_info
 
@@ -97,7 +100,7 @@ class Entrance(object):
         logging.warning('This loop sent email: %s', items_alert)
         for item_alert in items_alert:  # item: [email, item_name, item_price, user_price, item_id, column_id]
             item_url = 'https://item.jd.com/' + str(item_alert['item_id']) + '.html'
-            email_text = '您监控的物品：' + item_alert['name'] + '，现在价格为：' + item_alert['item_price'] + \
+            email_text = ' 您监控的物品：' + item_alert['name'] + '，现在价格为：' + item_alert['item_price'] + \
                          '，您设定的价格为：' + item_alert['user_price'] + '，赶紧购买吧！' + item_url
             email_subject = '您监控的物品降价了！'
             try:

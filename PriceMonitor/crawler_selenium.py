@@ -2,6 +2,8 @@
 # coding=utf-8
 import re
 import logging
+from json import decoder
+
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, StaleElementReferenceException
 from selenium.webdriver.chrome.options import Options
@@ -13,7 +15,7 @@ class Crawler(object):
 
     def __init__(self, proxy=None):
         chrome_options = Options()
-        chrome_options.add_argument('--headless')
+        # chrome_options.add_argument('--headless')
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
@@ -100,25 +102,22 @@ class Crawler(object):
         return item_info_dict
 
     def get_huihui_item(self, item_id):
-        huihui_info = {}
+        huihui_info_dict = {"max_price": None, "min_price": None}
         url = 'https://zhushou.huihui.cn/productSense?phu=https://item.jd.com/' + item_id + '.html'
         try:
             self.chrome.get(url)
             url_text = self.chrome.find_element_by_tag_name('body').text
-            # print('source', url_text)
             info = json.loads(url_text)
-            max_price = info['max']
-            min_price = info['min']
-            logging.info('max and min price: %s, %s', max_price, min_price)
-            huihui_info['max_price'] = max_price
-            huihui_info['min_price'] = min_price
+            huihui_info_dict = {"max_price": info['max'], "min_price": info['min']}
+            logging.info(huihui_info_dict)
+        except decoder.JSONDecodeError as e:
+            logging.warning('Crawl failure: {}'.format(e))
         except NoSuchElementException as e:
-            logging.warning('Crawl failure: %s', e)
+            logging.warning('Crawl failure: {}'.format(e))
         except TimeoutException as e:
-            logging.warning('Crawl failure: %s', e)
+            logging.warning('Crawl failure: {}'.format(e))
         self.chrome.quit()
-        # huihui_info = {max_price, min_price}
-        return huihui_info
+        return huihui_info_dict
 
 
 if __name__ == '__main__':

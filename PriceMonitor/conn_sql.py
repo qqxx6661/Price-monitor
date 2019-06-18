@@ -21,26 +21,9 @@ class Sql(object):
         self.session.commit()
 
     def write_item(self, item_info):  # item_id, user_price, user_id
-        # TODO:修改到这里
         time_now = datetime.datetime.now()
-        exist = self.session.query(Monitor).filter_by(item_id=item_info[0]).all()
-        if len(exist):  # item already exists in category database
-            logging.info('Item id %s already exists in database, update information', item_info[0])
-            exist[0].item_name = item_info[1]
-            exist[0].subtitle = item_info[3]
-            exist[0].update_time = time_now
-            if exist[0].item_price != item_info[2]:  # if new price, calculate discount and last_price
-                exist[0].status = 1  # set status to 1 for send new alert mail
-                exist[0].last_price = exist[0].item_price
-                exist[0].item_price = item_info[2]
-                logging.debug('last price: {} {}, price: {} {}'.format(type(exist[0].last_price), exist[0].last_price,
-                                                                       type(item_info[2]), item_info[2]))
-                exist[0].discount = round(float(item_info[2]) / float(exist[0].last_price), 2)
-                logging.warning('Item id %s changed price: %s to %s', item_info[0], exist[0].last_price, item_info[2])
-        else:
-            new_item = Monitor(item_id=item_info[0], user_price=item_info[1], user_id=item_info[2], status=1,
-                               add_time=time_now, update_time=time_now)
-            self.session.add(new_item)
+        new_item = Monitor(item_id=item_info[0], user_price=item_info[1], user_id=item_info[2], status=1, add_time=time_now, update_time=time_now)
+        self.session.add(new_item)
         self.session.commit()
 
     def read_all_not_updated_item(self):
@@ -125,16 +108,9 @@ if __name__ == '__main__':
     # sql.write_user('test', 'xxxxxxxxxxx@qq.com')
 
     # add test item
-    sql.write_item(['5544068', '15', '1'])
+    # item_id, user_price, user_id
+    sql.write_item(['100005857580', '2000', '1'])
 
     # read all items needed update
-    # print(sql.read_all_not_updated_item(600))
+    # print(sql.read_all_not_updated_item())
 
-    # read all user emails for category user
-    # print(sql.check_cate_user_mail('Monitor'))
-
-    # update all items needed update
-    # sql.update_item_name(1, '123456')
-
-    # check all items needed to send email
-    # print(sql.check_cate_item_need_to_remind())
