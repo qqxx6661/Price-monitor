@@ -57,7 +57,7 @@ class Crawler(object):
             except json.decoder.JSONDecodeError as e:
                 logging.info('Captcha error: %s', e)
                 return False
-            logging.info('subtitle: %s, %s', subtitle)
+            logging.info('subtitle: %s', subtitle)
             return subtitle_js['ads'][0]['ad']
         except requests.exceptions.ProxyError as e:
             logging.info('Proxy error: %s', e)
@@ -157,15 +157,15 @@ class Crawler(object):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     c = Crawler()
-    # logging.debug(c.get_price_jd('2777811', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
-    #                                                    'AppleWebKit/536.6 (KHTML, like Gecko) '
-    #                                                    'Chrome/20.0.1092.0 Safari/536.6'}))
-    # logging.debug(c.get_name_jd('2777811', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
-    #                                                       'AppleWebKit/536.6 (KHTML, like Gecko) '
-    #                                                       'Chrome/20.0.1092.0 Safari/536.6'}))
-    # logging.debug(c.get_subtitle_jd('5181380', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
-    #                                                       'AppleWebKit/536.6 (KHTML, like Gecko) '
-    #                                                       'Chrome/20.0.1092.0 Safari/536.6'}))
-    # logging.debug(c.get_info_huihui('2777811', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
-    #                                                           'AppleWebKit/536.6 (KHTML, like Gecko) '
-    #                                                           'Chrome/20.0.1092.0 Safari/536.6'}))
+    logging.debug(c.get_price_jd('2777811', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
+                                                       'AppleWebKit/536.6 (KHTML, like Gecko) '
+                                                       'Chrome/20.0.1092.0 Safari/536.6'}))
+    logging.debug(c.get_name_jd('2777811', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
+                                                          'AppleWebKit/536.6 (KHTML, like Gecko) '
+                                                          'Chrome/20.0.1092.0 Safari/536.6'}))
+    logging.debug(c.get_subtitle_jd('5181380', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
+                                                          'AppleWebKit/536.6 (KHTML, like Gecko) '
+                                                          'Chrome/20.0.1092.0 Safari/536.6'}))
+    logging.debug(c.get_info_huihui('2777811', {'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) '
+                                                              'AppleWebKit/536.6 (KHTML, like Gecko) '
+                                                              'Chrome/20.0.1092.0 Safari/536.6'}))

@@ -1,20 +1,28 @@
 
-**Price-Monitor:京东价格监控**
+# Price-Monitor
 
-**Python3+Requests/Selenium+Sqlite/Mysql+免费代理池/代理接口**
+**京东商品价格监控系统**
 
 [![License](https://img.shields.io/badge/license-GPLv3-yellowgreen.svg)]()
 [![Poweredby](https://img.shields.io/badge/Powered%20by-requests-green.svg)]()
 [![Poweredby](https://img.shields.io/badge/Powered%20by-selenium-green.svg)]()
 
-**该项目README分为两部分：**
+## 简介
 
-- 电商价格监控网站
-- 本开源代码：爬虫模块
+用户自行设定指定商品的监控价格，运行爬虫脚本不间断获取价格数据，商品降价到设定价格后发送邮件提醒用户。
 
-# 电商价格监控
+主要技术实现：Python爬虫/IP代理池/JS接口爬取/Selenium页面爬取
 
-由该开源**爬虫模块**孵化的项目**电商价格监控**目前已上线运营：访问电商价格监控平台
+## README文档导航
+
+- 若您只想**使用该项目监控京东商品**，请查看：[电商价格监控网站](#电商价格监控网站)
+- 若您想搭建**京东商品页的爬虫代码**，请查看：[核心爬虫代码](#核心爬虫代码)
+- 若您想搭建**京东商品监控项目（爬虫队列+数据存储+邮件提醒）**，请查看：[监控系统搭建](#监控系统搭建)
+
+
+## 电商价格监控网站<span id="电商价格监控网站"></span>
+
+由该开源**爬虫模块**孵化的项目**电商价格监控**目前已上线运营：
 
 <a href="https://price.monitor4all.cn/">https://price.monitor4all.cn/</a>
 
@@ -23,9 +31,9 @@
 
 **【功能一】自定义商品监控：设置商品ID和预期价格，当商品价格【低于】设定的预期价格后自动发送邮件提醒用户。**
 
-**【功能二】品类商品订阅：用户订阅后，该类降价幅度大于7折的【自营商品】会被选出并发送邮件提醒用户。**
+**【功能二（暂时关闭）】品类商品订阅：用户订阅后，该类降价幅度大于7折的【自营商品】会被选出并发送邮件提醒用户。**
 
-
+**【功能三】查看京东商品数据和商品价格趋势图**
 
 
 
@@ -35,22 +43,19 @@
 
 ![Pagedemo3](docs/Pagedemo3.png)
 
+![Pagedemo3](docs/Pagedemo4.png)
+
+### 网站架构
+
 ![Structure](docs/Structure.png)
 
 **申明：本项目仅限于爬取网上公开可见的商品信息，请勿用于任何商业用途。**
 
-## 关于网站源码
+### 该网站页面源码
 
-该库仅为**爬虫模块**代码，网站前后端代码暂时未开源，采用的是Springboot+React，请关注博客，之后会另开新库开源。
+网站前后端代码暂时未开源，采用的是SpringBoot + React，请关注博客，之后会另开新库开源。
 
-
-
-
-## 电商价格监控 TODO List
-
-**持续更新中**
-
-### 功能
+### 网站功能 TODO
 
 - [x] 京东卡券价格，京东精选价格爬取
 - [ ] QQ微信第三方登录
@@ -58,24 +63,135 @@
 - [ ] 京东二手商品监控
 - [ ] 支持亚马逊中国，天猫，淘宝等商城
 
-### 技术
+### 网站技术 TODO
 
 - [x] 代理池重构，单独检验代理对电商网站可达性
-- [x] 支持2种代理接口：芝麻代理， Redis代理
-- [x] 使用Springboot代替Django作为网站后台
+- [x] 支持代理接口：芝麻代理，Tor代理，自行搭建代理池
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/2">商品副标题抓取，PLUS会员价格</a>
 - [x] <a href="https://github.com/qqxx6661/Price-monitor/issues/3">商品历史价格</a>
-- [x] Selenium + PhantomJS/Headless Chrome 爬取
+- [x] Selenium + Headless Chrome 爬取
+- [x] Docker一键部署
 - [ ] 支持更多的代理接口：vps拨号代理
-- [ ] Docker一键部署
 
-### 其他功能（欢迎Issue提供意见）
+### 其他功能 TODO（欢迎Issue提供意见）
 
 - [ ] <a href="https://github.com/qqxx6661/Price-monitor/issues/1">小说更新监控</a>
 
 
 
-# 本开源代码：Price-Monitor（京东商品信息爬虫）
+## 核心爬虫代码
+
+请先使用`pip install -r requirements.txt`安装依赖库
+
+你需要的仅仅只是这两个爬虫类：
+
+- crawler_selenium: (推荐) 使用selenium+chrome访问京东商品单页进行爬取
+
+- crawler_js.py: 使用requests访问京东商品数据接口进行爬取
+
+两个类下方都有测试代码，可以调试，并且都可以接入http/https代理。
+
+**代码里面包括了商品名称，副标题，PLUS价格，历史最高最低价等。**
+
+由于电商经常会更新接口，所以爬虫代码往往具有时效性，若发现代码报错不要慌，自行尝试修改。
+
+## 监控系统搭建
+
+请先使用`pip install -r requirements.txt`安装依赖库
+
+监控系统由如下部分组成：
+
+- 数据库：负责数据的存储
+- 爬虫任务队列：
+    - 生产者：负责将用户设定的商品加入待爬队列
+    - 消费者：收到消息后进行数据的抓取
+- 邮件提醒任务队列：
+    - 生产者：数据抓取后，与用户设定数据进行对比，需要发送提醒则发送消息
+    - 消费者：异步发送提醒邮件
+
+下面我们一步步搭建系统
+
+### 数据库模块
+
+数据库采用MySQL，Python使用SQLAlchemy连接数据库，主要涉及文件：
+
+
+
+数据表有三张：
+
+- pm_mail_record：邮件发送记录表
+- pm_monitor_item：用户监控商品表
+- pm_user：用户信息表
+
+```
+
+-- ----------------------------
+-- Table structure for pm_mail_record
+-- ----------------------------
+
+DROP TABLE IF EXISTS `pm_mail_record`;
+CREATE TABLE `pm_mail_record` (
+ `id` int(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',
+ `address` varchar(64) NOT NULL COMMENT '邮箱地址',
+ `from` varchar(64) NOT NULL COMMENT '发件人昵称',
+ `to` varchar(64) NOT NULL COMMENT '收件人昵称',
+ `subject` varchar(64) NOT NULL COMMENT '主题',
+ `content` varchar(16384) NOT NULL COMMENT '内容',
+ `is_sent` tinyint(3) NOT NULL COMMENT '1-发送成功, 0-发送失败',
+ `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+ `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='邮件发送记录';
+
+-- ----------------------------
+-- Table structure for pm_user
+-- ----------------------------
+DROP TABLE IF EXISTS `pm_user`;
+CREATE TABLE `pm_user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(40) DEFAULT NULL,
+  `email` varchar(40) NOT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  `is_active` tinyint(1) NOT NULL COMMENT '是否活跃账号',
+  `is_superuser` tinyint(1) NOT NULL COMMENT '是否管理员',
+  `is_olduser` tinyint(1) DEFAULT '0',
+  `gmt_create` datetime DEFAULT NULL,
+  `gmt_modified` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Table structure for pm_monitor_item
+-- ----------------------------
+DROP TABLE IF EXISTS `pm_monitor_item`;
+CREATE TABLE `pm_monitor_item` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `user_price` varchar(10) NOT NULL,
+  `item_id` bigint(20) NOT NULL,
+  `category_id` bigint(20) DEFAULT NULL,
+  `name` varchar(256) DEFAULT NULL,
+  `subtitle` varchar(512) DEFAULT NULL,
+  `price` varchar(32) DEFAULT NULL,
+  `plus_price` varchar(32) DEFAULT NULL,
+  `max_price` varchar(32) DEFAULT NULL,
+  `min_price` varchar(32) DEFAULT NULL,
+  `discount` varchar(32) DEFAULT NULL,
+  `last_price` varchar(32) DEFAULT NULL,
+  `note` varchar(128) DEFAULT NULL COMMENT '备注（保留字段）',
+  `sale` varchar(128) DEFAULT NULL,
+  `label` varchar(128) DEFAULT NULL,
+  `store_name` varchar(128) DEFAULT NULL,
+  `is_ziying` tinyint(1) DEFAULT NULL COMMENT '是否自营',
+  `is_alert` tinyint(1) NOT NULL COMMENT '是否已经提醒',
+  `gmt_create` datetime DEFAULT NULL,
+  `gmt_modified` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
 
 ## 文件结构
 
@@ -102,6 +218,8 @@
     - mail.py: 邮件模块
 
 - requirements.txt: 安装依赖
+
+
 
 
 ## 使用步骤
@@ -223,23 +341,26 @@ PROXY_CRAWL = 0
 python monitor_main.py
 ```
 
-### PS
 
-- 默认使用selenium渲染页面抓取京东商品，代码详见crawler_selenium.py，也可以使用JS爬取，详见crawler_js.py（如需要使用js爬取可以自行修改monitor_main.py对接）
-- 代码默认使用了SQLite，如需切换到Mysql，请自行修改conn_sql.py的注释
+
+
+
+
 
 ## 老版本
 
-- <a href="https://github.com/qqxx6661/Price-Monitor-py2">Python2+requests+sqlite+代理池+Flask(web)</a>
+- <a href="https://github.com/qqxx6661/Price-Monitor-py2">Python2+requests+sqlite+代理池+Flask前后端</a>
 
-- <a href="https://github.com/qqxx6661/Price-monitor-php">Python2+requests+mysql+代理池+Php(web)</a>
+- <a href="https://github.com/qqxx6661/Price-monitor-php">Python2+requests+mysql+代理池+Php前后端</a>
 
 ## Contribution
 
-- Issue
+- Issue, Pull Request
 
 ## Introduction
 
-- Monitor price changes for items at JD.com, users could set price for specific item. Once the price is lower than excepted, the server will send an e-mail to user.
+This open-source code focuses on monitoring price changes at JD.com, users could set expect price for specific item. 
 
+Once the price is lower than excepted, the server will send an e-mail to user.
 
+If you are interested in it, feel free to contract yangzd1993@foxmail.com
