@@ -5,7 +5,6 @@ import time
 import redis
 import logging
 import requests
-from crawler_selenium import Crawler
 from CONFIG import PROXY_POOL_IP
 USER_AGENT_LIST = [
     "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1",
@@ -40,15 +39,6 @@ USER_AGENT_LIST = [
 
 class Proxy(object):
 
-    @staticmethod
-    def check_jd(proxy, header):
-        logging.info('Validating name proxy: %s', proxy)
-        cr = Crawler(proxy)
-        item_name = cr.get_jd_item('5089253')  # Iphone X
-        if item_name:
-            return True
-        return False
-
     def get_proxy(self):
         r = redis.Redis(host=PROXY_POOL_IP, port=6379, db=0)
         while True:
@@ -57,10 +47,6 @@ class Proxy(object):
                 good_proxies = good_proxies[0].decode("utf-8")  # byte to str
                 good_proxies = {"http": good_proxies, "https": good_proxies}
                 header = self.get_ua()
-                if not self.check_jd(good_proxies, header):
-                        logging.warning('Validate proxy failure, retrying')
-                        continue
-                logging.info('Validate SUCCESS，using proxy: %s', good_proxies)
                 return header, good_proxies
             else:
                 logging.critical('No proxy now from remote server, retrying')

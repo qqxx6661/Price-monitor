@@ -15,9 +15,9 @@
 
 ## README文档导航
 
-- 若您只想**使用该项目监控京东商品**，请查看：[电商价格监控网站](#电商价格监控网站)
-- 若您想搭建**京东商品页的爬虫代码**，请查看：[核心爬虫代码](#核心爬虫代码)
-- 若您想搭建**京东商品监控项目（爬虫队列+数据存储+邮件提醒）**，请查看：[监控系统搭建](#监控系统搭建)
+1. 若您只想**使用该项目监控京东商品**，请查看：[电商价格监控网站](#电商价格监控网站)
+2. 若您想搭建**京东商品页的爬虫代码**，请查看：[核心爬虫代码](#核心爬虫代码)
+3. 若您想搭建**京东商品监控项目（爬虫队列+数据存储+邮件提醒）**，请查看：[监控系统搭建](#监控系统搭建)
 
 
 ## 电商价格监控网站<span id="电商价格监控网站"></span>
@@ -95,6 +95,20 @@
 
 由于电商经常会更新接口，所以爬虫代码往往具有时效性，若发现代码报错不要慌，自行尝试修改。
 
+
+### 使用selenium+chrome注意事项
+
+需要安装chrome和chromedriver
+
+若您使用默认的Selenium+Chrome，您还需要安装好Chrome，以及Selenium用来操控Chrome的ChromeDriver。
+
+http://npm.taobao.org/mirrors/chromedriver/
+
+若您在Windows下调试本项目，可以将ChromeDriver放置在任何配置了环境变量的目录下，我放在了C:/Windows/chromedriver.exe
+
+若您使用Js爬取，不需要任何额外的库
+
+
 ## 监控系统搭建
 
 请先使用`pip install -r requirements.txt`安装依赖库
@@ -109,19 +123,27 @@
     - 生产者：数据抓取后，与用户设定数据进行对比，需要发送提醒则发送消息
     - 消费者：异步发送提醒邮件
 
-下面我们一步步搭建系统
+下面我们一步步搭建系统。
 
 ### 数据库模块
 
-数据库采用MySQL，Python使用SQLAlchemy连接数据库，主要涉及文件：
+数据库采用MySQL，Python使用SQLAlchemy连接MySQL，主要涉及文件：
+
+- database/model/*：三张表实体类
+- database/sql_operator.py：操作数据库
 
 
+数据库起名为pricemonitor，你也可以修改数据库名，数据表有三张：
 
-数据表有三张：
-
-- pm_mail_record：邮件发送记录表
-- pm_monitor_item：用户监控商品表
 - pm_user：用户信息表
+- pm_monitor_item：用户监控商品表
+- pm_mail_record：邮件发送记录表
+
+用户表pm_user存储着用户的基础信息，包括邮箱等。pm_monitor_item表则记录着用户监控的商品，其关联了pm_user表的用户Id。pm_mail_record则负责存储每次发邮件的邮件内容，作为归档。该表也可以不用。
+
+这三张表是我运行的[电商监控系统](https://price.monitor4all.cn/)中的三张表，里面有一些对于本项目来说冗余的字段，比如用户密码等，大家可以忽略。
+
+我们可以通过如下给出的sql语句在数据库新建好表，也可以运行database/model/文件夹下三个py文件，通过sqlalchemy反向生成数据表。
 
 ```
 
@@ -192,158 +214,59 @@ CREATE TABLE `pm_monitor_item` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
+生成好数据表后，我们首先向pm_user插入一个用户记录：
+
+```
+INSERT INTO `pricemonitor`.`pm_user` (`name`, `email`, `password`, `is_active`, `is_superuser`) VALUES ('user01', 'xxxxxxxx@foxmail.com', 'xxxxx', '1', '1');
+```
+
+重要字段：
+
+- 用户id = 1
+- 邮箱email = xxxxxxxx@foxmail.com
+
+接着，我们向pm_monitor_item表插入一个监控记录，监控iPhone11（JD对应商品id为：100008348542）
+
+```
+INSERT INTO `pricemonitor`.`pm_monitor_item` (`user_id`, `user_price`, `item_id`, `is_alert`) VALUES ('1', '6000.00', '100008348542', '1');
+```
+
+重要字段：
+
+- user_id：对应pm_user的主键id
+- user_price：用户设定的价格，这里我们设置为6000元，一旦低于6000元，就会发送提醒
+- item_id：商品id
+- is_alert：是否提醒，一旦发送了提醒邮件，就将其置为0，防止重复发送邮件
+
+
+
+截下来我们还需要设置邮件提醒的发件邮箱：
+
+简易教程请查看：<a href="https://github.com/qqxx6661/Price-monitor/blob/master/docs/SetupEmail.md">设置发件邮箱</a>
+
+### 爬虫任务队列
+
+
+
+### 邮件提醒任务队列
+
+
+
+
 
 ## 文件结构
 
 - docs:文档
-
 - PriceMonitor
-
     - monitor_main.py: 程序入口
-
     - CONFIG.py: 常用参数设置
-    
     - create_db.py: 创建数据库
-
     - conn_sql.py: 数据操作库
-    
-    - logger.conf: 日志参数设置
-    
     - proxy.py: 代理IP获取
-    
     - crawler_selenium/js.py: 爬虫脚本(二选一，默认采用crawler_selenium.py，如需要使用js爬取可以自行修改monitor_main.py对接)
-    
     - mailbox.txt: 邮箱参数设置
-    
     - mail.py: 邮件模块
-
 - requirements.txt: 安装依赖
-
-
-
-
-## 使用步骤
-
-### 项目依赖
-
-Python 3.5/3.6
-
-主要需要以下库：
-
-- requests
-- lxml
-- selenium
-
-可以创建环境后，使用项目自带的requirements.txt一键安装环境
-
-```
-pip install -r requirements.txt
-```
-
-我们的爬虫有两种方式：
-
-- Js接口爬取
-- Selenium+Chrome网页渲染爬取
-
-默认使用Selenium+Chrome进行京东商品爬取，因为Js接口变化频繁，需要频繁修改代码。
-
-
-
-若您使用默认的Selenium+Chrome，您还需要安装好Chrome，以及Selenium用来操控Chrome的ChromeDriver。
-
-http://npm.taobao.org/mirrors/chromedriver/
-
-推荐采用2.35/2.36
-
-若您在Windows下调试本项目，可以将ChromeDriver放置在任何配置了环境变量的目录下，我放在了C:/Windows/chromedriver.exe
-
-若您使用Js爬取，不需要任何额外的库
-
-### 1. 运行脚本，新建Sqlite数据库，添加测试商品
-
-```
-python PriceMonitor/create_db.py
-```
-
-我们有两张表User（用户表）和Monitor（商品表）：
-
-```
-取自create_db.py，给出了下列字段（SQLAlchemy格式），英文名称还是比较容易理解的，就不单个说明了。
-
-User表：
-
-column_id = Column(Integer, primary_key=True, autoincrement=True)
-user_name = Column(String(32), nullable=False, unique=True)
-email = Column(String(64), nullable=False, unique=True)
-
-Monitor表：
-
-column_id = Column(Integer, primary_key=True, autoincrement=True)
-item_id = Column(BIGINT, nullable=False)
-item_name = Column(String(128))
-item_price = Column(String(32))
-user_price = Column(String(32))
-discount = Column(String(32))
-lowest_price = Column(String(32))
-highest_price = Column(String(32))
-last_price = Column(String(32))
-plus_price = Column(String(32))
-subtitle = Column(String(128))
-user_id = Column(Integer, ForeignKey('user.column_id'))
-note = Column(String(128))
-update_time = Column(DateTime)
-add_time = Column(DateTime)
-status = Column(Boolean, nullable=False)
-user = relationship(User)
-```
-
-创建成功后可以使用<a href="http://sqlitebrowser.org/"> sqlitedatabasebrowser</a>图形化的查看数据库结构和数据。
-
-可以通过conn_sql.py里运行现成代码添加用户和商品，如下方代码所示：
-
-```
-# add user named 'test'
-sql.write_user('test', '404013419@qq.com')
-
-# add test item
-sql.write_item(['1306761', '15', '1'])  # 京东商品五月花抽纸编号为1306761，监控价格15元，用户id是刚才写入的账号的自增编号1('test', '404013419@qq.com')
-```
-
-![Sqlitedemo](docs/Sqlitedemo.png)
-
-### 2. 设置邮件提醒的发件邮箱
-
-简易教程请查看：<a href="https://github.com/qqxx6661/Price-monitor/blob/master/docs/SetupEmail.md">设置发件邮箱</a>
-
-### 3. 你可以选择开启代理池抓取（3.1）或者直接使用本地抓取（3.2）
-
-
-#### 3.1 开启Redis代理池，可以采用<a href="https://github.com/ShichaoMa/proxy_factory">proxy_factory</a>基于redis的简单代理工厂，感谢作者ShichaoMa。
-
-**当然你也可以自行对接自己的代理池，只需修改proxy.py对应代码**
-
-启动redis代理池后，修改CONFIG.py的设置：
-
-```
-PROXY_CRAWL = 1
-PROXY_POOL_IP = "127.0.0.1"  # Your redis server ip
-```
-
-#### 3.2 直接采用本地IP进行监控（注意：请将抓取间隔CRAWL_TIME调大，避免自己的IP被禁）
-
-```
-PROXY_CRAWL = 0
-```
-
-### 4. 运行监控主程序
-
-```
-python monitor_main.py
-```
-
-
-
-
 
 
 
