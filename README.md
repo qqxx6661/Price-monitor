@@ -131,6 +131,7 @@ http://npm.taobao.org/mirrors/chromedriver/
 
 - database/model/*：三张表实体类
 - database/sql_operator.py：操作数据库
+- CONFIG.py：请在该文件中配置好数据库连接
 
 
 数据库起名为pricemonitor，你也可以修改数据库名，数据表有三张：
@@ -178,8 +179,8 @@ CREATE TABLE `pm_user` (
   `is_active` tinyint(1) NOT NULL COMMENT '是否活跃账号',
   `is_superuser` tinyint(1) NOT NULL COMMENT '是否管理员',
   `is_olduser` tinyint(1) DEFAULT '0',
-  `gmt_create` datetime DEFAULT NULL,
-  `gmt_modified` datetime DEFAULT NULL,
+  `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -208,8 +209,8 @@ CREATE TABLE `pm_monitor_item` (
   `store_name` varchar(128) DEFAULT NULL,
   `is_ziying` tinyint(1) DEFAULT NULL COMMENT '是否自营',
   `is_alert` tinyint(1) NOT NULL COMMENT '是否已经提醒',
-  `gmt_create` datetime DEFAULT NULL,
-  `gmt_modified` datetime DEFAULT NULL,
+  `gmt_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
@@ -240,32 +241,151 @@ INSERT INTO `pricemonitor`.`pm_monitor_item` (`user_id`, `user_price`, `item_id`
 
 
 
-截下来我们还需要设置邮件提醒的发件邮箱：
+### 爬虫任务队列/邮件提醒任务队列
+
+任务队列使用RabbitMQ消息队列，需要先安装RabbitMQ，请自行安装。
+
+项目中使用依赖库Pika连接RabbitMQ。
+
+#### 邮件提醒任务队列
+
+
+我们需要设置邮件提醒的发件邮箱：
 
 简易教程请查看：<a href="https://github.com/qqxx6661/Price-monitor/blob/master/docs/SetupEmail.md">设置发件邮箱</a>
 
-### 爬虫任务队列
+邮件提醒任务队列相关代码：
+
+- consumer_mail.py：邮件发送队列消费者
+- producer_mail.py：邮件发送队列生产者
+- mailbox.txt: 邮箱参数设置
+- mail.py: 邮件发送工具类
+
+运行consumer_mail开启消费者监听，监听消息队列传来的待爬消息：
+
+```
+.....
+.....
+2020-01-15 17:42:58 | INFO | consumer_mail.py 25 | 开始监听Queue：mail
+```
+
+这样就启动了发送邮件的监听，一旦爬虫任务队列发现需要发送提醒邮件给用户，则会向该队列发送一条消息。
+
+你可以运行一次producer_mail.py来向消息队列推送一次测试邮件，别忘了将producer_mail.py中的接收者邮箱address改为你自己的实际邮箱
+
+```
+data = {'subject': "【主题】", 'address': "xxxxxxxx@foxmail.com", 'msg': "内容", 'from': "发送者", 'to': "接收者", "id": 1}
+```
 
 
+#### 爬虫任务队列
 
-### 邮件提醒任务队列
+紧接着，我们需要开启爬虫的消费者。
+
+爬虫任务队列相关代码：
+
+- consumer_jd_crawl.py：爬虫任务队列消费者
+- producer_jd_crawl.py：爬虫任务队列生产者
 
 
+运行consumer_jd_crawl开启消费者监听，监听消息队列传来的待爬消息：
+
+```
+.....
+.....
+2020-01-15 17:18:14 | INFO | consumer_jd_crawl.py 30 | 开始监听Queue：jd_crawl
+```
+
+**到了这里，你已经大功告成了。**
+
+你可以运行一次producer_jd_crawl.py，来手动向待爬队列推送一次爬虫请求。
+
+在producer_jd_crawl.py中，我们向消费者推送了一条商品Id为100008348542，记录为pm_monitor_item中id=1的记录数据，消费者会去爬取该商品，得到商品价格，存储表中，并与用户设置的价格对比，若小于用户设定的价格（或者在用户设定的价格基础上打了DISCOUNT_LIMIT=0.7（7折）），则会向邮件队列发送消息，发送待爬邮件。
+在实际应用中,你可以通过各种方式向爬虫队列推送数据，甚至可以改造producer_jd_crawl.py来实现推送。
+
+下面给出一次完整的消费队列日志：
 
 
+```
+2020-01-15 17:51:25 | INFO | connection_workflow.py 179 | Pika version 1.1.0 connecting to ('::1', 5672, 0, 0)
+2020-01-15 17:51:25 | INFO | io_services_utils.py 345 | Socket connected: <socket.socket fd=912, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 54510, 0, 0), raddr=('::1', 5672, 0, 0)>
+2020-01-15 17:51:25 | INFO | connection_workflow.py 428 | Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x03CCF350>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x03CCF350> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2020-01-15 17:51:25 | INFO | connection_workflow.py 293 | AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x03CCF350> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2020-01-15 17:51:25 | INFO | connection_workflow.py 725 | AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x03CCF350> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2020-01-15 17:51:25 | INFO | blocking_connection.py 453 | Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x03CCF350> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2020-01-15 17:51:25 | INFO | blocking_connection.py 1247 | Created channel=1
+2020-01-15 17:51:25 | INFO | consumer_jd_crawl.py 30 | 开始监听Queue：jd_crawl
+2020-01-15 17:51:31 | INFO | consumer_jd_crawl.py 34 | 收到消息: b'{"id": "1", "item_id": "100008348542"}' 序号为：1
+2020-01-15 17:51:31 | INFO | consumer_jd_crawl.py 38 | 线程开始处理消息： b'{"id": "1", "item_id": "100008348542"}' 序号为：1
+2020-01-15 17:51:31 | INFO | consumer_jd_crawl.py 67 | 开始爬取：{'id': '1', 'item_id': '100008348542'}
+2020-01-15 17:51:35 | INFO | crawler_selenium.py 46 | Crawl: https://item.jd.com/100008348542.html
+2020-01-15 17:51:36 | INFO | crawler_selenium.py 61 | 价格元素未出现
+2020-01-15 17:51:38 | INFO | crawler_selenium.py 53 | 爬取价格数据
+2020-01-15 17:51:38 | INFO | crawler_selenium.py 54 | Found price element: 5999.00
+2020-01-15 17:51:38 | INFO | crawler_selenium.py 120 | Crawl SUCCESS: {'name': 'Apple iPhone 11 (A2223) 128GB 黑色 移动联通电信4G手机 双卡双待', 'price': '5999.00', 'plus_price': None, 'subtitle': '【年货节抢购攻略】iPhone11Pro系列抢券享12期免息轻松月付无压力，XSMax限时抢券立减500元！更多优惠点击！'}
+2020-01-15 17:51:48 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:51:50 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:51:52 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:51:54 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:51:56 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:51:58 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:52:00 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:52:02 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:52:04 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:52:06 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:52:08 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:52:10 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:52:12 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:52:14 | INFO | crawler_selenium.py 137 | huihui body元素出现，内容未出现重试2秒
+2020-01-15 17:52:16 | WARNING | crawler_selenium.py 151 | Crawl failure: Expecting value
+2020-01-15 17:52:19 | INFO | consumer_jd_crawl.py 71 | 爬虫执行时间: 47.987872838974
+2020-01-15 17:52:19 | INFO | sql_operator.py 31 | 更新京东商品数据开始：{'id': '1', 'item_id': '100008348542'} {'name': 'Apple iPhone 11 (A2223) 128GB 黑色 移动联通电信4G手机 双卡双待', 'price': '5999.00', 'plus_price': None, 'subtitle': '【年货节抢购攻略】iPhone11Pro系列抢券享12期免息轻松月付无压力，XSMax限时抢券立减500元！更多优惠点击！'}
+2020-01-15 17:52:19 | INFO | sql_operator.py 53 | 更新京东商品数据完成
+2020-01-15 17:52:19 | INFO | sql_operator.py 59 | 查询表记录Id：1 是否需要邮件提醒
+2020-01-15 17:52:19 | INFO | consumer_jd_crawl.py 53 | 需要发送邮件提醒，pm_monitor_id：[1]
+2020-01-15 17:52:19 | INFO | sql_operator.py 107 | 查用户表获取信息：1
+2020-01-15 17:52:19 | INFO | sql_operator.py 113 | user_id：1
+2020-01-15 17:52:19 | INFO | sql_operator.py 121 | name：user01
+2020-01-15 17:52:19 | INFO | sql_operator.py 122 | email：xxxxxxxx@foxmail.com
+2020-01-15 17:52:19 | INFO | consumer_jd_crawl.py 79 | 开始撰写提醒邮件内容
+2020-01-15 17:52:19 | INFO | connection_workflow.py 179 | Pika version 1.1.0 connecting to ('::1', 5672, 0, 0)
+2020-01-15 17:52:19 | INFO | io_services_utils.py 345 | Socket connected: <socket.socket fd=1000, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 54639, 0, 0), raddr=('::1', 5672, 0, 0)>
+2020-01-15 17:52:19 | INFO | connection_workflow.py 428 | Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x0422B4D0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x0422B4D0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2020-01-15 17:52:19 | INFO | connection_workflow.py 293 | AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x0422B4D0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2020-01-15 17:52:19 | INFO | connection_workflow.py 725 | AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x0422B4D0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2020-01-15 17:52:19 | INFO | blocking_connection.py 453 | Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x0422B4D0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2020-01-15 17:52:19 | INFO | blocking_connection.py 1247 | Created channel=1
+2020-01-15 17:52:19 | INFO | blocking_connection.py 788 | Closing connection (200): Normal shutdown
+2020-01-15 17:52:19 | INFO | channel.py 534 | Closing channel (200): 'Normal shutdown' on <Channel number=1 OPEN conn=<SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x0422B4D0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>>
+2020-01-15 17:52:19 | INFO | channel.py 1119 | Received <Channel.CloseOk> on <Channel number=1 CLOSING conn=<SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x0422B4D0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>>
+2020-01-15 17:52:19 | INFO | connection.py 1295 | Closing connection (200): 'Normal shutdown'
+2020-01-15 17:52:19 | INFO | io_services_utils.py 732 | Aborting transport connection: state=1; <socket.socket fd=1000, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 54639, 0, 0), raddr=('::1', 5672, 0, 0)>
+2020-01-15 17:52:19 | INFO | io_services_utils.py 907 | _AsyncTransportBase._initate_abort(): Initiating abrupt asynchronous transport shutdown: state=1; error=None; <socket.socket fd=1000, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 54639, 0, 0), raddr=('::1', 5672, 0, 0)>
+2020-01-15 17:52:19 | INFO | io_services_utils.py 870 | Deactivating transport: state=1; <socket.socket fd=1000, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 54639, 0, 0), raddr=('::1', 5672, 0, 0)>
+2020-01-15 17:52:19 | INFO | connection.py 1999 | AMQP stack terminated, failed to connect, or aborted: opened=True, error-arg=None; pending-error=ConnectionClosedByClient: (200) 'Normal shutdown'
+2020-01-15 17:52:19 | INFO | connection.py 2065 | Stack terminated due to ConnectionClosedByClient: (200) 'Normal shutdown'
+2020-01-15 17:52:19 | INFO | io_services_utils.py 883 | Closing transport socket and unlinking: state=3; <socket.socket fd=1000, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 54639, 0, 0), raddr=('::1', 5672, 0, 0)>
+2020-01-15 17:52:19 | INFO | blocking_connection.py 525 | User-initiated close: result=BlockingConnection__OnClosedArgs(connection=<SelectConnection CLOSED transport=None params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>, error=ConnectionClosedByClient: (200) 'Normal shutdown')
+2020-01-15 17:52:19 | INFO | consumer_jd_crawl.py 106 | 提醒邮件已经发送进队列
+2020-01-15 17:52:19 | INFO | consumer_jd_crawl.py 60 | 消息处理完成，发送确认序号： 1
+```
 
 ## 文件结构
 
 - docs:文档
 - PriceMonitor
-    - monitor_main.py: 程序入口
+    - database/model/*：三张表实体类
+    - database/sql_operator.py：操作数据库
     - CONFIG.py: 常用参数设置
-    - create_db.py: 创建数据库
-    - conn_sql.py: 数据操作库
     - proxy.py: 代理IP获取
-    - crawler_selenium/js.py: 爬虫脚本(二选一，默认采用crawler_selenium.py，如需要使用js爬取可以自行修改monitor_main.py对接)
+    - crawler_selenium：Selenium爬虫（默认）
+    - crawler_js.py: JS爬虫
     - mailbox.txt: 邮箱参数设置
-    - mail.py: 邮件模块
+    - mail.py: 邮件发送工具类
+    - consumer_jd_crawl.py：爬虫任务队列消费者
+    - producer_jd_crawl.py：爬虫任务队列生产者
+    - consumer_mail.py：邮件发送队列消费者
+    - producer_mail.py：邮件发送队列生产者
 - requirements.txt: 安装依赖
 
 
@@ -287,3 +407,12 @@ This open-source code focuses on monitoring price changes at JD.com, users could
 Once the price is lower than excepted, the server will send an e-mail to user.
 
 If you are interested in it, feel free to contract yangzd1993@foxmail.com
+
+## 找到我
+
+- **微信公众号：后端技术漫谈**
+- CSDN：[@后端技术漫谈](http://blog.csdn.net/qqxx6661)
+- 知乎：[@后端技术漫谈](https://www.zhihu.com/people/yang-zhen-dong-1/)
+- 简书：[@后端技术漫谈](https://www.jianshu.com/u/b5f225ca2376)
+- 掘金：[@后端技术漫谈](https://juejin.im/user/5b48015ce51d45191462ba55)
+

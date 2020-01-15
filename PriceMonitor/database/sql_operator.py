@@ -18,7 +18,7 @@ class SqlOperator:
         """
         初始化数据库连接
         """
-        conn = "mysql+pymysql://{}:{}@{}:{}/pm_backend?charset={}".format(MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST,
+        conn = "mysql+pymysql://{}:{}@{}:{}/pricemonitor?charset={}".format(MYSQL_USER, MYSQL_PASSWORD, MYSQL_HOST,
                                                                           MYSQL_PORT, MYSQL_CHARSET)
         logging.info("初始化数据库连接:{}".format(conn))
         engine = create_engine(conn)

@@ -42,9 +42,13 @@ class Mail(object):
         # server.starttls()  # SSL required
         server.set_debuglevel(1)
         server.login(self.from_addr, self.password)
-        server.sendmail(self.from_addr, [self.to_addr], self.msg.as_string())
+        try:
+            server.sendmail(self.from_addr, [self.to_addr], self.msg.as_string())
+        except Exception:
+            return False
         logging.info('----This email\'s info: %s, %s, %s', self.text, self.receiver, self.to_addr)
         server.quit()
+        return True
 
 
 if __name__ == '__main__':
