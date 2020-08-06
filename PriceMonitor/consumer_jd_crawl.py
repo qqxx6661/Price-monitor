@@ -125,10 +125,12 @@ class ConsumerJdCrawl:
                 continue
             else:
                 break
-        crawler_huihui = Crawler()
-        # dict: {"max_price", "min_price"}
-        huihui_info = crawler_huihui.get_huihui_item(str(crawl_data["item_id"]))
-        crawler_huihui.close()
+        # 慧慧最低最高价接口已经失效，不再访问
+        huihui_info = {"max_price": None, "min_price": None}
+        # crawler_huihui = Crawler()
+        # # dict: {"max_price", "min_price"}
+        # huihui_info = crawler_huihui.get_huihui_item(str(crawl_data["item_id"]))
+        # crawler_huihui.close()
         return item_info, huihui_info
 
 if __name__ == '__main__':
