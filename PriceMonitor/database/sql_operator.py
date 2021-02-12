@@ -28,7 +28,7 @@ class SqlOperator:
         """
         更新商品数据
         """
-        logging.info("更新京东商品数据开始：{} {}".format(crawl_info, item_info))
+        logging.info("更新某东商品数据开始：{} {}".format(crawl_info, item_info))
         if not item_info["price"]:
             logging.info("爬虫获取价格数据为空，不更新数据库")
             return
@@ -50,7 +50,7 @@ class SqlOperator:
         record.gmt_modified = datetime.datetime.now()
         session.commit()
         session.close()
-        logging.info("更新京东商品数据完成")
+        logging.info("更新某东商品数据完成")
 
     def query_email_alert_needed(self, monitor_item_id):
         """

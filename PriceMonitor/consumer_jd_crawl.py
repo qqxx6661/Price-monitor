@@ -62,7 +62,7 @@ class ConsumerJdCrawl:
 
     def jd_crawl(self, crawl_data):
         """
-        爬取京东商品数据和慧慧最高最低价数据
+        爬取某东商品数据和慧慧最高最低价数据
         """
         logging.info("开始爬取：{}".format(crawl_data))
         start = time.time()
