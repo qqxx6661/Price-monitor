@@ -1,6 +1,6 @@
 lxml==4.6.3
 requests==2.20.0
-urllib3==1.24.2
+urllib3==1.26.5
 selenium==3.8.1
 redis==3.2.1
 PyMySQL==0.8.0
