@@ -55,7 +55,16 @@
 
 ### 该网站页面源码
 
-网站前后端代码暂时未开源，采用的是SpringBoot + React，请关注博客，之后会另开新库开源。
+采用的是SpringBoot + React
+
+后端代码：
+
+https://github.com/qqxx6661/Price-monitor-backend
+
+前端代码：
+
+友人帮忙开发，暂不开源。
+
 
 ### 网站功能 TODO
 
