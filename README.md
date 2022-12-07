@@ -13,11 +13,7 @@
 
 主要技术实现：Python爬虫/IP代理池/JS接口爬取/Selenium页面爬取
 
-**申明：本脚本没有涉及某东账号登录，没有大批量抓取某东敏感信息，仅抓取商品名称和价格，如有任何敏感问题，请联系我删除。**
-
-**申明：本脚本没有涉及某东账号登录，没有大批量抓取某东敏感信息，仅抓取商品名称和价格，如有任何敏感问题，请联系我删除。**
-
-**申明：本脚本没有涉及某东账号登录，没有大批量抓取某东敏感信息，仅抓取商品名称和价格，如有任何敏感问题，请联系我删除。**
+**申明：本脚本没有涉及某东账号登录，没有大批量抓取某东敏感信息，仅在调用脚本时会抓取输入商品的商品名称和价格，如有任何敏感问题，请联系我删除。**
 
 ## README文档导航
 
@@ -28,9 +24,7 @@
 
 ## 电商价格监控网站<span id="电商价格监控网站"></span>
 
-由该开源**爬虫模块**孵化的项目**电商价格监控**目前已上线运营：
-
-<a href="https://price.monitor4all.cn/">https://price.monitor4all.cn/</a>
+由该开源**爬虫模块**孵化的项目**电商价格监控**目前已经下线，不在提供任何服务。
 
 
 **网站实现功能：**
@@ -40,12 +34,6 @@
 **【功能二（暂时关闭）】品类商品订阅：用户订阅后，该类降价幅度大于7折的【自营商品】会被选出并发送邮件提醒用户。**
 
 **【功能三】查看某东商品数据和商品价格趋势图**
-
-
-
-![Pagedemo](docs/Pagedemo.png)
-
-![Pagedemo2](docs/Pagedemo2.png)
 
 ![Pagedemo3](docs/Pagedemo3.png)
 
@@ -422,12 +410,4 @@ This open-source code focuses on monitoring price changes at JD.com, users could
 Once the price is lower than excepted, the server will send an e-mail to user.
 
 If you are interested in it, feel free to contract yangzd1993@foxmail.com
-
-## 找到我
-
-- **微信公众号：后端技术漫谈**
-- CSDN：[@后端技术漫谈](http://blog.csdn.net/qqxx6661)
-- 知乎：[@后端技术漫谈](https://www.zhihu.com/people/yang-zhen-dong-1/)
-- 简书：[@后端技术漫谈](https://www.jianshu.com/u/b5f225ca2376)
-- 掘金：[@后端技术漫谈](https://juejin.im/user/5b48015ce51d45191462ba55)
 
