@@ -1,5 +1,5 @@
 lxml==4.6.3
-requests==2.20.0
+requests==2.31.0
 urllib3==1.26.5
 selenium==3.8.1
 redis==3.2.1
